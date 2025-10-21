@@ -26,7 +26,7 @@ function ForgotPassword() {
     try {
       setLoading(true);
       await axios.post(
-        "http://localhost:4500/auth/forgotpassword",
+        "https://garage-pulse-api.onrender.com/auth/forgotpassword",
         { email }
       );
       setStep(2);
@@ -54,7 +54,7 @@ function ForgotPassword() {
     try {
       setLoading(true);
       await axios.post(
-        "http://localhost:4500/auth/resetpassword",
+        "https://garage-pulse-api.onrender.com/auth/resetpassword",
         {
           email,
           otp,
