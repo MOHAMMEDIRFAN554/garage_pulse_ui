@@ -1,25 +1,20 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import './App.css';
-import Registration from './component/Registration/registration';
-import {Routes,Route} from "react-router-dom" 
-
-import { Routes, Route } from 'react-router-dom';
-import Login from './component/Login/Login';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./component/Dashboard/home/Dashboard";
+import ForgotPassword from "./component/ForgotPassword/ForgotPassword";
+import Login from "./component/Login/Login";
+import Registration from "./component/Registration/registration"; 
 
 function App() {
   return (
-    <>
     <Routes>
-      <Route path="/" element={<Registration />} />
-      <Route path="/registration" element={<Registration/>} />
+      <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/registration" element={<Registration />} /> 
     </Routes>
-    </>
-  )
+  );
 }
 
 export default App;
-
-
-
