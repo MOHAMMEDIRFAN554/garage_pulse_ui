@@ -29,15 +29,13 @@ function Login() {
 
       setLoading(false);
 
-      // Assuming backend returns a success message and token
+      
       alert(response.data.message || "Login Successful");
 
-      // Optionally, store token in localStorage
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
       }
 
-      // Navigate to dashboard/home
       navigate("/home");
 
     } catch (err) {
