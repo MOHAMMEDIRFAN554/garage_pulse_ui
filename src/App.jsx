@@ -4,18 +4,22 @@ import './App.css';
 import Registration from './component/Registration/registration';
 import {Routes,Route} from "react-router-dom" 
 
+import { Routes, Route } from 'react-router-dom';
+import Login from './component/Login/Login';
 
 function App() {
-  
-
   return (
     <>
     <Routes>
       <Route path="/" element={<Registration />} />
       <Route path="/registration" element={<Registration/>} />
+      <Route path="/login" element={<Login />} />
     </Routes>
     </>
-    )
+  )
 }
 
 export default App;
+
+
+
