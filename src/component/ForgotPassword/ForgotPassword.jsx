@@ -5,13 +5,13 @@ import "./ForgotPassword.css";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [token, setToken] = useState("");
-  const [message, setMessage] = useState("");
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1);  
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
@@ -23,15 +23,14 @@ function ForgotPassword() {
       return;
     }
 
-    setLoading(true);
     try {
-      const res = await axios.post(
-        "https://garage-pulse-api.onrender.com/auth/forgotpassword",
+      setLoading(true);
+      await axios.post(
+        "http://localhost:4500/auth/forgotpassword",
         { email }
       );
-      setToken(res.data.token);
-      setMessage("Email verified. Enter your new password.");
       setStep(2);
+      setMessage("OTP sent to your email. Enter OTP and new password.");
     } catch (err) {
       setMessage(err.response?.data?.msg || "Something went wrong");
     } finally {
@@ -42,8 +41,8 @@ function ForgotPassword() {
   const handleResetPassword = async () => {
     setMessage("");
 
-    if (!newPassword || !confirmPassword) {
-      setMessage("Both password fields are required");
+    if (!otp || !newPassword || !confirmPassword) {
+      setMessage("All fields are required");
       return;
     }
 
@@ -52,13 +51,15 @@ function ForgotPassword() {
       return;
     }
 
-    setLoading(true);
     try {
+      setLoading(true);
       await axios.post(
-        "https://garage-pulse-api.onrender.com/auth/resetpassword",
-        { newPassword, confirmPassword },
+        "http://localhost:4500/auth/resetpassword",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          email,
+          otp,
+          newPassword,
+          confirmPassword,
         }
       );
 
@@ -82,20 +83,28 @@ function ForgotPassword() {
         <>
           <input
             type="email"
-            className="input"
-            placeholder="Enter email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="input"
             disabled={loading}
           />
           <button className="btn" onClick={handleForgotPassword} disabled={loading}>
-            {loading ? "Sending..." : "Send Reset Email"}
+            {loading ? "Sending OTP..." : "Send OTP"}
           </button>
         </>
       )}
 
       {step === 2 && !success && (
         <>
+          <input
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            className="input"
+            disabled={loading}
+          />
           <input
             type="password"
             placeholder="Enter new password"
