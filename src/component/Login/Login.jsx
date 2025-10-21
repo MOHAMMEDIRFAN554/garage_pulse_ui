@@ -4,6 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Login() {
+  const navigate = useNavigate(); //  You missed this line earlier
+  const [user, setUser] = useState({ name: '', password: '' });
+
+  function handleSubmit() {
+    alert('Login Successful');
+    // navigate('/dashboard'); // Optional — if you have a dashboard page
+  }
   const navigate = useNavigate();
 
   const [user, setUser] = useState({ email: '', password: '' });
@@ -61,6 +68,7 @@ function Login() {
           placeholder="Enter Email"
           className="input"
         />
+
         <input
           name="password"
           value={user.password}
@@ -70,9 +78,21 @@ function Login() {
           className="input"
         />
 
+        <button className="btn" onClick={handleSubmit}>
+          Login
         <button className="btn" onClick={handleLogin} disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
+
+        {/* 🔹 Forgot Password link */}
+        <p className="forgot-link">
+          <span
+            onClick={() => navigate('/forgot-password')}
+            style={{ color: 'blue', cursor: 'pointer' }}
+          >
+            Forgot Password?
+          </span>
+        </p>
       </div>
     </div>
   );
