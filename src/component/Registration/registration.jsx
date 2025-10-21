@@ -16,16 +16,13 @@ function Registration() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Handle form input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Handle registration
     const handleRegister = async () => {
         setError('');
 
-        // Validate password match
         if (formData.password !== formData.confirmPassword) {
             setError("Passwords do not match");
             return;
