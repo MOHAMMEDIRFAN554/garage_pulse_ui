@@ -1,31 +1,53 @@
+/* ==== General Page Layout ==== */
 .home-container {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f9;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #2b5876, #4e4376);
+  color: white;
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
-.home-card {
-    text-align: center;
-    padding: 30px;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    width: 350px;
+/* ==== Top Header (User + Logout) ==== */
+.home-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.home-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+.user-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #f1f1f1;
 }
 
-.home-btn:hover {
-    background-color: #0056b3;
+/* ==== Logout Button ==== */
+.logout-btn {
+  background-color: #ff4b5c;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+.logout-btn:hover {
+  background-color: #e63946;
+  transform: scale(1.05);
+}
+
+/* ===*
