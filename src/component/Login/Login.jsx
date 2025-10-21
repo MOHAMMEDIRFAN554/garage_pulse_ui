@@ -5,6 +5,7 @@ import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
+
   const [user, setUser] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,39 +14,34 @@ function Login() {
     setError('');
 
     if (!user.email || !user.password) {
-      setError("Please enter both email and password");
+      setError('Please fill all fields');
       return;
     }
 
     try {
       setLoading(true);
+
       const response = await axios.post(
-        "https://garage-pulse-api.onrender.com/auth/login",
+        'https://garage-pulse-api.onrender.com/auth/login',
         {
           email: user.email,
-          password: user.password,
+          password: user.password
         }
       );
 
       setLoading(false);
+      alert(response.data.msg);
 
-      // Assuming backend returns a success message and token
-      alert(response.data.message || "Login Successful");
+      localStorage.setItem('token', response.data.token);
 
-      // Optionally, store token in localStorage
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-      }
-
-      // Navigate to dashboard/home
-      navigate("/home");
+      navigate('/home');
 
     } catch (err) {
       setLoading(false);
       if (err.response && err.response.data) {
-        setError(err.response.data.error || "Login failed");
+        setError(err.response.data.msg || 'Login failed');
       } else {
-        setError("Network error");
+        setError('Network error');
       }
     }
   };
@@ -59,22 +55,23 @@ function Login() {
 
         <input
           name="email"
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
           type="email"
           placeholder="Enter Email"
           className="input"
-          value={user.email}
-          onChange={(e) => setUser({ ...user, email: e.target.value })}
         />
         <input
           name="password"
+          value={user.password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
           type="password"
           placeholder="Enter Password"
           className="input"
-          value={user.password}
-          onChange={(e) => setUser({ ...user, password: e.target.value })}
         />
+
         <button className="btn" onClick={handleLogin} disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? 'Logging in...' : 'Login'}
         </button>
       </div>
     </div>
