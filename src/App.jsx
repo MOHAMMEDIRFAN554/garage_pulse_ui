@@ -1,25 +1,15 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import './App.css';
-import Registration from './component/Registration/registration';
-import {Routes,Route} from "react-router-dom" 
-
-import { Routes, Route } from 'react-router-dom';
-import Login from './component/Login/Login';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./component/Login/Login";
+import Home from "./component/Dashboard/home/home";
 
 function App() {
   return (
-    <>
     <Routes>
-      <Route path="/" element={<Registration />} />
-      <Route path="/registration" element={<Registration/>} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Login />} />
+      <Route path="/home" element={<Home />} />
     </Routes>
-    </>
-  )
+  );
 }
 
 export default App;
-
-
-
