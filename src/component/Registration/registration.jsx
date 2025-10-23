@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import constant from '../../constant/constant';
-import './Registration.css';
+import './registration.css';
 
 function Registration() {
   const navigate = useNavigate();

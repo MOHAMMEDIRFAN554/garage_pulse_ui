@@ -7,6 +7,8 @@
   width: 100%;
   max-width: 400px;
   border-radius: 12px;
+  padding: 2rem;
+  transition: all 0.3s ease;
 }
 
 .login-card h3 {
@@ -17,6 +19,7 @@
 .form-control {
   padding: 0.75rem 1rem;
   font-size: 0.95rem;
+  margin-bottom: 1rem;
 }
 
 .btn {
@@ -26,20 +29,39 @@
   border-radius: 8px;
 }
 
+.link-pointer {
+  cursor: pointer;
+}
+
 /* Tablet */
 @media (max-width: 768px) {
   .login-card {
-    padding: 2rem;
+    padding: 1.75rem;
+  }
+
+  .login-card h3 {
+    font-size: 1.75rem;
   }
 }
 
 /* Mobile */
 @media (max-width: 480px) {
   .login-card {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    margin: 0 1rem;
   }
 
   .login-card h3 {
     font-size: 1.5rem;
+  }
+
+  .form-control {
+    font-size: 0.9rem;
+    padding: 0.65rem 0.8rem;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+    padding: 0.6rem;
   }
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import constant from '../../constant/constant';
+import './Login.css'; 
 
 function Login() {
   const navigate = useNavigate();
@@ -72,8 +73,7 @@ function Login() {
 
         <p className="text-center">
           <span
-            className="text-primary"
-            style={{ cursor: "pointer" }}
+            className="text-primary link-pointer"
             onClick={() => navigate("/forgot-password")}
           >
             Forgot Password?
