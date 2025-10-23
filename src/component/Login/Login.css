@@ -33,7 +33,6 @@
   cursor: pointer;
 }
 
-/* Tablet */
 @media (max-width: 768px) {
   .login-card {
     padding: 1.75rem;
@@ -44,7 +43,6 @@
   }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
   .login-card {
     padding: 1.25rem;
