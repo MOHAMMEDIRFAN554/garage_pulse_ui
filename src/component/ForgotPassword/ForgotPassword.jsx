@@ -1,47 +1,23 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./ForgotPassword.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import constant from '../../constant/constant';
+import './ForgotPassword.css';
 
 function ForgotPassword() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [step, setStep] = useState(1);  
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const navigate = useNavigate();
-
-  const handleForgotPassword = async () => {
-    setMessage("");
-    if (!email) {
-      setMessage("Email is required");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await axios.post(
-        "https://garage-pulse-api.onrender.com/auth/forgotpassword",
-        { email }
-      );
-      setStep(2);
-      setMessage("OTP sent to your email. Enter OTP and new password.");
-    } catch (err) {
-      setMessage(err.response?.data?.msg || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleResetPassword = async () => {
     setMessage("");
 
-    if (!otp || !newPassword || !confirmPassword) {
+    if (!email || !newPassword || !confirmPassword) {
       setMessage("All fields are required");
       return;
     }
@@ -53,81 +29,74 @@ function ForgotPassword() {
 
     try {
       setLoading(true);
-      await axios.post(
-        "https://garage-pulse-api.onrender.com/auth/resetpassword",
-        {
-          email,
-          otp,
-          newPassword,
-          confirmPassword,
-        }
-      );
+      const response = await axios.post(constant.FORGOT_API, {
+        email,
+        newPassword,
+        confirmPassword
+      });
 
+      setLoading(false);
       setSuccess(true);
-      setMessage("Password reset successfully! Redirecting to login...");
+      setMessage(response.data.msg);
       setTimeout(() => navigate("/login"), 2500);
     } catch (err) {
-      setMessage(err.response?.data?.msg || "Reset failed");
-    } finally {
       setLoading(false);
+      setMessage(err.response?.data?.msg || "Reset failed");
     }
   };
 
   return (
-    <div className="forgot-container">
-      <h2>Forgot Password</h2>
+    <div className="forgot-page d-flex justify-content-center align-items-center min-vh-100 bg-light">
+      <div className="card shadow p-4 forgot-card">
+        <h3 className="text-center mb-4">Reset Password</h3>
 
-      {message && <p className={success ? "success" : "error"}>{message}</p>}
+        {message && (
+          <div className={`alert ${success ? "alert-success" : "alert-danger"}`}>
+            {message}
+          </div>
+        )}
 
-      {step === 1 && !success && (
-        <>
+        <div className="mb-3">
           <input
             type="email"
+            className="form-control"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input"
-            disabled={loading}
+            disabled={loading || success}
           />
-          <button className="btn" onClick={handleForgotPassword} disabled={loading}>
-            {loading ? "Sending OTP..." : "Send OTP"}
-          </button>
-        </>
-      )}
+        </div>
 
-      {step === 2 && !success && (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="input"
-            disabled={loading}
-          />
+        <div className="mb-3">
           <input
             type="password"
+            className="form-control"
             placeholder="Enter new password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="input"
-            disabled={loading}
+            disabled={loading || success}
           />
+        </div>
+
+        <div className="mb-3">
           <input
             type="password"
+            className="form-control"
             placeholder="Confirm new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="input"
-            disabled={loading}
+            disabled={loading || success}
           />
-          <button className="btn" onClick={handleResetPassword} disabled={loading}>
-            {loading ? "Resetting..." : "Reset Password"}
-          </button>
-        </>
-      )}
+        </div>
 
-      {success && <p className="success">Redirecting to login...</p>}
+        <button
+          className="btn btn-primary w-100"
+          onClick={handleResetPassword}
+          disabled={loading || success}
+        >
+          {loading ? "Resetting..." : "Reset Password"}
+        </button>
+      </div>
     </div>
   );
 }
