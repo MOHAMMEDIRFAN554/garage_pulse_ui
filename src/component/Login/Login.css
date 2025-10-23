@@ -1,110 +1,45 @@
-    /* Container centers the login box */
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 120vh;
-  background: linear-gradient(135deg, #d7e1ec, #f7f9fb);
+.login-container {
   font-family: 'Poppins', sans-serif;
+  padding: 1rem;
 }
 
-/* Login card */
-.login {
-  background: #ffffff;
-  padding: 40px 50px;
-  border-radius: 15px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 350px;
-}
-
-/* Heading */
-.login h2 {
-  margin-bottom: 25px;
-  color: #333333;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-/* Input fields */
-.input {
+.login-card {
   width: 100%;
-  padding: 12px 15px;
-  margin: 10px 0;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  outline: none;
-  font-size: 15px;
-  transition: all 0.3s ease;
+  max-width: 400px;
+  border-radius: 12px;
 }
 
-.input:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 5px rgba(74, 144, 226, 0.4);
+.login-card h3 {
+  font-weight: 600;
+  color: #333;
 }
 
-/* Button */
+.form-control {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
 .btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  background: #4a90e2;
-  color: white;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  border: none;
+  padding: 0.65rem;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
 }
 
-.btn:hover {
-  background: #3b7dd8;
+/* Tablet */
+@media (max-width: 768px) {
+  .login-card {
+    padding: 2rem;
+  }
 }
 
-.btn:active {
-  transform: scale(0.98);
-}
-
-/* Responsive */
+/* Mobile */
 @media (max-width: 480px) {
-  .login {
-    width: 85%;
-    padding: 30px 20px;
+  .login-card {
+    padding: 1.5rem;
   }
 
-  .login h2 {
-    font-size: 20px;
+  .login-card h3 {
+    font-size: 1.5rem;
   }
 }
-
-
-
-
-/* 
-
-
-.login{
-    width: 340px;
-    margin: 160px auto;
-    text-align: center;
-    border: 1px solid black;
-}
-.input{
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid lightgray;
-    border-radius: 0;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-.btn{
-    width: 100%;
-    box-sizing: border-box;
-    padding: 12px;
-    font-size: 16px;
-    background-color: black;
-    color: white;
-    border: 1px solid black;
-} */
