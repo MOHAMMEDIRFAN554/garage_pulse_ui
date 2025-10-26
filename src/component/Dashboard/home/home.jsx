@@ -1,30 +1,35 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../Login/authContext";
 import "./Home.css";
 
 const Home = () => {
-  const [user, setUser] = useState(null);
-
-  // Replace with your backend API URL
-  const userId = "12345"; // this can come from login token or localStorage
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/user/${userId}`)
-      .then((res) => res.json())
-      .then((data) => setUser(data))
-      .catch((err) => console.error("Error fetching user data:", err));
-  }, []);
+    setUserData(user);
+  }, [user]);
 
   const handleLogout = () => {
-    // clear any stored tokens and redirect to login page
-    alert("You have logged out!");
+    logout();
+    alert("You have been logged out successfully!");
+    navigate("/login");
   };
 
-  if (!user) return <h2 style={{ color: "white" }}>Loading user data...</h2>;
+  if (!userData) {
+    return (
+      <div className="home-container">
+        <div className="text-white text-center">Loading user data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="home-container">
       <header className="home-header">
-        <div className="user-name">Welcome, {user.name}</div>
+        <div className="user-name">Welcome, {userData?.name || 'User'}</div>
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
@@ -32,12 +37,15 @@ const Home = () => {
 
       <div className="home-card">
         <h1>Welcome to Garage Pulse!</h1>
-        <p>You have successfully logged in as <strong>{user.email}</strong>.</p>
+        <p>You have successfully logged in as <strong>{userData?.email}</strong>.</p>
+        <p><strong>Role:</strong> {userData?.role}</p>
+        <p><strong>User ID:</strong> {userData?.id}</p>
+        
         <button
           className="home-btn"
-          onClick={() => alert("More features coming soon!")}
+          onClick={() => navigate('/dashboard')}
         >
-          Explore
+          Go to Dashboard
         </button>
       </div>
     </div>

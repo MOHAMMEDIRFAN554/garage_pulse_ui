@@ -1,5 +1,8 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from './component/Login/authContext';
+import ProtectedRoute from './Routes/ProtectedRoute';
+import PublicRoute from './Routes/PublicRoute';
 
 import Landing from './component/landing/Landing';
 import Registration from './component/Registration/registration';
@@ -7,19 +10,58 @@ import Login from './component/Login/Login';
 import Home from './component/Dashboard/home/home';
 import Dashboard from "./component/Dashboard/home/Dashboard";
 import ForgotPassword from "./component/ForgotPassword/ForgotPassword";
+import NotFound from "./component/NotFoundPage/NotFound";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/landing" replace />} />
+          
+          {/* Public routes */}
+          <Route path="/landing" element={
+            <PublicRoute>
+              <Landing />
+            </PublicRoute>
+          } />
+          
+          <Route path="/login" element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } />
+          
+          <Route path="/registration" element={
+            <PublicRoute>
+              <Registration />
+            </PublicRoute>
+          } />
+          
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          } />
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/registration" element={<Registration />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* Protected routes */}
+          <Route path="/home" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
 
-      <Route path="/home" element={<Home />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-    </Routes>
+          {/* 404 page */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
