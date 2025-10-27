@@ -11,6 +11,8 @@ import Home from './component/Dashboard/home/home';
 import Dashboard from "./component/Dashboard/home/Dashboard";
 import ForgotPassword from "./component/ForgotPassword/ForgotPassword";
 import NotFound from "./component/NotFoundPage/NotFound";
+import AddVehicle from "./component/Dashboard/screen/addVehicle";
+import VehicleDetails from './component/Dashboard/screen/VehicleDetails';
 
 function App() {
   return (
@@ -18,26 +20,26 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/landing" replace />} />
-          
+
           {/* Public routes */}
           <Route path="/landing" element={
             <PublicRoute>
               <Landing />
             </PublicRoute>
           } />
-          
+
           <Route path="/login" element={
             <PublicRoute>
               <Login />
             </PublicRoute>
           } />
-          
+
           <Route path="/registration" element={
             <PublicRoute>
               <Registration />
             </PublicRoute>
           } />
-          
+
           <Route path="/forgot-password" element={
             <PublicRoute>
               <ForgotPassword />
@@ -50,7 +52,16 @@ function App() {
               <Home />
             </ProtectedRoute>
           } />
-          
+          <Route
+            path="/addVehicle"
+            element={
+              <ProtectedRoute>
+                <AddVehicle />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/vehicle/:id" element={<ProtectedRoute><VehicleDetails /></ProtectedRoute>} />
+
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />

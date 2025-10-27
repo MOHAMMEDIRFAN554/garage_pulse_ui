@@ -29,7 +29,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <header className="home-header">
-        <div className="user-name">Welcome, {userData?.name || 'User'}</div>
+        <div className="user-name">Welcome, {userData?.name || "User"}</div>
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
@@ -37,16 +37,29 @@ const Home = () => {
 
       <div className="home-card">
         <h1>Welcome to Garage Pulse!</h1>
-        <p>You have successfully logged in as <strong>{userData?.email}</strong>.</p>
-        <p><strong>Role:</strong> {userData?.role}</p>
-        <p><strong>User ID:</strong> {userData?.id}</p>
-        
-        <button
-          className="home-btn"
-          onClick={() => navigate('/dashboard')}
-        >
-          Go to Dashboard
-        </button>
+        <p>
+          You have successfully logged in as <strong>{userData?.email}</strong>.
+        </p>
+        <p>
+          <strong>Role:</strong> {userData?.role}
+        </p>
+        <p>
+          <strong>User ID:</strong> {userData?.id}
+        </p>
+
+        <div className="button-container">
+          <button className="home-btn" onClick={() => navigate("/dashboard")}>
+            Go to Dashboard
+          </button>
+
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/addVehicle")}
+          >
+            ➕ Add Vehicle
+          </button>
+        </div>
       </div>
     </div>
   );

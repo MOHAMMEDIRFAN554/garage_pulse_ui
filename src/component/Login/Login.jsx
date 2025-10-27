@@ -27,7 +27,6 @@ function Login() {
         password: user.password,
       });
 
-      // Save token and user data using context
       login(response.data.user, response.data.token);
       
       setLoading(false);
