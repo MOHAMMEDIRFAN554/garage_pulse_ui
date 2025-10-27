@@ -5,24 +5,36 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import constant from "../../../constant/constant";
 import "./AddVehicle.css";
 
-const MANUFACTURERS = {
-  "Maruti Suzuki": ["Alto", "Swift", "Baleno", "Dzire", "Ertiga","Brezza","Grand Vitara","Fronx"],
-  Hyundai: ["i10", "i20", "Venue", "Creta", "Verna"],
-  Tata: ["Tiago", "Tigor", "Nexon", "Harrier", "Punch"],
-  Mahindra: ["Thar", "XUV700", "Scorpio", "Bolero"],
-  Kia: ["Seltos", "Sonet", "Carnival", "EV6"],
-  Honda: ["City", "Amaze", "Jazz", "WR-V"],
-  Toyota: ["Innova", "Fortuner", "Yaris", "Glanza"],
-  Ford: ["Figo", "EcoSport", "Endeavour"],
-  Renault: ["Kwid", "Triber", "Duster"],
-  Volkswagen: ["Polo", "Vento", "Taigun"],
-  BMW: ["3 Series", "5 Series", "X1"],
-  Mercedes: ["A-Class", "C-Class", "GLE"],
-  Audi: ["A4", "A6", "Q3"],
-  Bajaj: ["Pulsar", "Dominar"],
-  Hero: ["Splendor", "Glamour"],
-  TVS: ["Apache", "Ntorq"],
-  "Royal Enfield": ["Classic 350", "Meteor 350"]
+const VEHICLE_DATA = {
+  Car: {
+    "Maruti Suzuki": ["Alto", "Swift", "Baleno", "Dzire", "Ertiga", "Brezza", "Grand Vitara", "Fronx"],
+    Hyundai: ["i10", "i20", "Venue", "Creta", "Verna"],
+    Tata: ["Tiago", "Tigor", "Nexon", "Harrier", "Punch"],
+    Mahindra: ["Thar", "XUV700", "Scorpio", "Bolero"],
+    Kia: ["Seltos", "Sonet", "Carnival", "EV6"],
+    Honda: ["City", "Amaze", "Jazz", "WR-V"],
+    Toyota: ["Innova", "Fortuner", "Yaris", "Glanza"],
+    Ford: ["Figo", "EcoSport", "Endeavour"],
+    Renault: ["Kwid", "Triber", "Duster"],
+    Volkswagen: ["Polo", "Vento", "Taigun"],
+    BMW: ["3 Series", "5 Series", "X1"],
+    Mercedes: ["A-Class", "C-Class", "GLE"],
+    Audi: ["A4", "A6", "Q3"]
+  },
+  Truck: {
+    Tata: ["Ultra", "Signa", "Prima"],
+    "Ashok Leyland": ["Boss", "U Truck", "Captain"]
+  },
+  Bike: {
+    Bajaj: ["Pulsar", "Dominar"],
+    Hero: ["Splendor", "Glamour"],
+    TVS: ["Apache", "Ntorq"],
+    "Royal Enfield": ["Classic 350", "Meteor 350"]
+  },
+  Bus: {
+    Tata: ["Starbus", "Cityride"],
+    "Ashok Leyland": ["Viking", "Cheetah"]
+  }
 };
 
 const AddVehicle = () => {
@@ -43,18 +55,32 @@ const AddVehicle = () => {
     lastServiceKM: "",
     isNew: false
   });
-  const [imageFile, setImageFile] = useState(null);
+
+
+  const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", msg: "" });
 
   useEffect(() => {
-    if (vehicle.manufacturer && MANUFACTURERS[vehicle.manufacturer]) {
-      setModels(MANUFACTURERS[vehicle.manufacturer]);
+    if (vehicle.type && VEHICLE_DATA[vehicle.type]) {
+      setManufacturers(Object.keys(VEHICLE_DATA[vehicle.type]));
+    } else {
+      setManufacturers([]);
+    }
+    setVehicle(prev => ({ ...prev, manufacturer: "", model: "" }));
+    setModels([]);
+  }, [vehicle.type]);
+
+  useEffect(() => {
+    if (vehicle.type && vehicle.manufacturer && VEHICLE_DATA[vehicle.type][vehicle.manufacturer]) {
+      setModels(VEHICLE_DATA[vehicle.type][vehicle.manufacturer]);
     } else {
       setModels([]);
     }
-  }, [vehicle.manufacturer]);
+    setVehicle(prev => ({ ...prev, model: "" }));
+  }, [vehicle.manufacturer, vehicle.type]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -71,7 +97,7 @@ const AddVehicle = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const required = ["type","registrationNumber","manufacturer","model","makeYear","fuelType","runningKM","servicePeriodYears","servicePeriodKM"];
+    const required = ["type", "registrationNumber", "manufacturer", "model", "makeYear", "fuelType", "runningKM", "servicePeriodYears", "servicePeriodKM"];
     for (let k of required) {
       if (!vehicle[k]) {
         setToast({ show: true, type: "danger", msg: `Please fill ${k}` });
@@ -104,6 +130,8 @@ const AddVehicle = () => {
     }
   };
 
+  const getValidationClass = (value) => value ? "is-valid" : "is-invalid";
+
   return (
     <div className="container py-4">
       <div className="card mx-auto add-vehicle-card">
@@ -111,117 +139,161 @@ const AddVehicle = () => {
           <h4 className="card-title mb-3">Add Vehicle</h4>
 
           {toast.show && (
-            <div className={`alert alert-${toast.type}`} role="alert">
+            <div className={`alert alert-${toast.type} custom-toast`} role="alert">
               {toast.msg}
             </div>
           )}
 
           <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <div className="row">
-              <div className="col-md-6 mb-2">
+            <div className="row g-3">
+
+              <div className="col-md-6">
                 <label className="form-label">Vehicle Type</label>
-                <select name="type" className="form-select" onChange={handleChange} required>
-                  <option value="">Select Type</option>
-                  <option>Car</option>
-                  <option>Bus</option>
-                  <option>Truck</option>
-                  <option>Bike</option>
-                </select>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-truck"></i></span>
+                  <select name="type" className={`form-select ${getValidationClass(vehicle.type)}`} value={vehicle.type} onChange={handleChange}>
+                    <option value="">Select Type</option>
+                    <option>Car</option>
+                    <option>Bus</option>
+                    <option>Truck</option>
+                    <option>Bike</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Registration Number</label>
-                <input name="registrationNumber" className="form-control" onChange={handleChange} required />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-hash"></i></span>
+                  <input name="registrationNumber" className={`form-control ${getValidationClass(vehicle.registrationNumber)}`} onChange={handleChange} />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Manufacturer</label>
-                <select name="manufacturer" className="form-select" onChange={handleChange} required>
-                  <option value="">Select Manufacturer</option>
-                  {Object.keys(MANUFACTURERS).map(m => <option key={m}>{m}</option>)}
-                </select>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-building"></i></span>
+                  <select name="manufacturer" className={`form-select ${getValidationClass(vehicle.manufacturer)}`} value={vehicle.manufacturer} onChange={handleChange}>
+                    <option value="">Select Manufacturer</option>
+                    {manufacturers.map(m => <option key={m}>{m}</option>)}
+                  </select>
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Model</label>
-                <select name="model" className="form-select" value={vehicle.model} onChange={handleChange} required>
-                  <option value="">Select Model</option>
-                  {models.length ? models.map(m => <option key={m}>{m}</option>) : null}
-                </select>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-car-front-fill"></i></span>
+                  <select name="model" className={`form-select ${getValidationClass(vehicle.model)}`} value={vehicle.model} onChange={handleChange}>
+                    <option value="">Select Model</option>
+                    {models.map(m => <option key={m}>{m}</option>)}
+                  </select>
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Make Year</label>
-                <input name="makeYear" type="number" className="form-control" onChange={handleChange} min="1950" max={(new Date()).getFullYear()} required />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-calendar3"></i></span>
+                  <input name="makeYear" type="number" className={`form-control ${getValidationClass(vehicle.makeYear)}`} onChange={handleChange} min="1950" max={(new Date()).getFullYear()} />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Fuel Type</label>
-                <select name="fuelType" className="form-select" onChange={handleChange} required>
-                  <option value="">Select Fuel Type</option>
-                  <option>Petrol</option>
-                  <option>Diesel</option>
-                  <option>CNG</option>
-                  <option>GAS</option>
-                  <option>EV</option>
-                  <option>Strong Hybrid</option>
-                  <option>Mild Hybrid</option>
-                </select>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-fuel-pump"></i></span>
+                  <select name="fuelType" className={`form-select ${getValidationClass(vehicle.fuelType)}`} onChange={handleChange}>
+                    <option value="">Select Fuel Type</option>
+                    <option>Petrol</option>
+                    <option>Diesel</option>
+                    <option>CNG</option>
+                    <option>GAS</option>
+                    <option>EV</option>
+                    <option>Strong Hybrid</option>
+                    <option>Mild Hybrid</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Running KM</label>
-                <input name="runningKM" type="number" className="form-control" onChange={handleChange} min="0" required />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-speedometer"></i></span>
+                  <input name="runningKM" type="number" className={`form-control ${getValidationClass(vehicle.runningKM)}`} onChange={handleChange} min="0" />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Service Period (Years)</label>
-                <input name="servicePeriodYears" type="number" className="form-control" onChange={handleChange} min="0" required />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-clock-history"></i></span>
+                  <input name="servicePeriodYears" type="number" className={`form-control ${getValidationClass(vehicle.servicePeriodYears)}`} onChange={handleChange} min="0" />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Service Period (KM)</label>
-                <input name="servicePeriodKM" type="number" className="form-control" onChange={handleChange} min="0" required />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-geo-alt"></i></span>
+                  <input name="servicePeriodKM" type="number" className={`form-control ${getValidationClass(vehicle.servicePeriodKM)}`} onChange={handleChange} min="0" />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Chassis Number (optional)</label>
-                <input name="chassisNumber" className="form-control" onChange={handleChange} />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-gear"></i></span>
+                  <input name="chassisNumber" className="form-control" onChange={handleChange} />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Engine Number (optional)</label>
-                <input name="engineNumber" className="form-control" onChange={handleChange} />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-tools"></i></span>
+                  <input name="engineNumber" className="form-control" onChange={handleChange} />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Image (optional)</label>
                 <input type="file" accept="image/*" className="form-control" onChange={handleFile} />
               </div>
 
-              <div className="col-12 mb-2">
+              <div className="col-12">
                 <div className="form-check">
                   <input className="form-check-input" type="checkbox" id="isNew" name="isNew" checked={vehicle.isNew} onChange={handleChange} />
-                  <label className="form-check-label" htmlFor="isNew">This is a new vehicle (disable last service)</label>
+                  <label className="form-check-label" htmlFor="isNew">
+                    This is a new vehicle (disable last service)
+                  </label>
                 </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Last Service Date</label>
-                <input name="lastServiceDate" type="date" className="form-control" onChange={handleChange} disabled={vehicle.isNew} />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-calendar-event"></i></span>
+                  <input name="lastServiceDate" type="date" className="form-control" onChange={handleChange} disabled={vehicle.isNew} />
+                </div>
               </div>
 
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
                 <label className="form-label">Last Service KM</label>
-                <input name="lastServiceKM" type="number" className="form-control" onChange={handleChange} disabled={vehicle.isNew} min="0" />
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-tachometer"></i></span>
+                  <input name="lastServiceKM" type="number" className="form-control" onChange={handleChange} disabled={vehicle.isNew} min="0" />
+                </div>
               </div>
             </div>
 
-            <div className="mt-3 d-flex gap-2">
-              <button type="submit" className="btn btn-success" disabled={submitting}>
+            <div className="mt-4 d-flex gap-3">
+              <button type="submit" className="btn btn-modern" disabled={submitting}>
                 {submitting ? "Saving..." : "Add Vehicle"}
               </button>
-              <button type="button" className="btn btn-secondary" onClick={() => navigate("/dashboard")}>Cancel</button>
+              <button type="button" className="btn btn-secondary-modern" onClick={() => navigate("/dashboard")}>
+                Back to Dashboard
+              </button>
             </div>
           </form>
         </div>
