@@ -99,8 +99,15 @@ function App() {
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+      <Router>
+        <Routes>
+
+        </Routes>
+      </Router>
+       <Route path="/add-employee" element={<AddEmployee />} />
       </Router>
     </AuthProvider>
+    
   );
 }
 

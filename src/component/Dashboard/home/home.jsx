@@ -59,6 +59,13 @@ const Home = () => {
           >
             ➕ Add Vehicle
           </button>
+
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/add-employee")}
+          >
+            ➕ Add Employee
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#28a745" }}
