@@ -56,7 +56,6 @@ const AddVehicle = () => {
     isNew: false
   });
 
-
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
   const [imageFile, setImageFile] = useState(null);
@@ -95,31 +94,43 @@ const AddVehicle = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const required = ["type", "registrationNumber", "manufacturer", "model", "makeYear", "fuelType", "runningKM", "servicePeriodYears", "servicePeriodKM"];
-    for (let k of required) {
-      if (!vehicle[k]) {
-        setToast({ show: true, type: "danger", msg: `Please fill ${k}` });
-        return;
-      }
+  const required = ["type", "registrationNumber", "manufacturer", "model", "makeYear", "fuelType", "runningKM", "servicePeriodYears", "servicePeriodKM"];
+  for (let k of required) {
+    if (!vehicle[k]) {
+      setToast({ show: true, type: "danger", msg: `Please fill ${k}` });
+      return;
     }
+  }
 
-    const formData = new FormData();
-    Object.keys(vehicle).forEach(k => {
-      if (vehicle[k] !== undefined && vehicle[k] !== null && vehicle[k] !== "") {
-        formData.append(k, vehicle[k]);
+  let base64Image = "";
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.readAsDataURL(imageFile);
+    reader.onloadend = async () => {
+      base64Image = reader.result;
+
+      try {
+        setSubmitting(true);
+        const res = await axiosInstance.post(constant.ADDVEHICLE, {
+          ...vehicle,
+          image: base64Image,
+        });
+
+        setToast({ show: true, type: "success", msg: res.data.msg || "Vehicle added" });
+        setTimeout(() => navigate("/dashboard"), 900);
+      } catch (err) {
+        console.error(err);
+        setToast({ show: true, type: "danger", msg: err.response?.data?.error || "Failed to add vehicle" });
+      } finally {
+        setSubmitting(false);
       }
-    });
-
-    if (imageFile) formData.append("image", imageFile);
-
+    };
+  } else {
     try {
       setSubmitting(true);
-      const res = await axiosInstance.post(constant.ADDVEHICLE, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
+      const res = await axiosInstance.post(constant.ADDVEHICLE, vehicle);
       setToast({ show: true, type: "success", msg: res.data.msg || "Vehicle added" });
       setTimeout(() => navigate("/dashboard"), 900);
     } catch (err) {
@@ -128,7 +139,9 @@ const AddVehicle = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }
+};
+
 
   const getValidationClass = (value) => value ? "is-valid" : "is-invalid";
 
@@ -255,6 +268,49 @@ const AddVehicle = () => {
                   <input name="engineNumber" className="form-control" onChange={handleChange} />
                 </div>
               </div>
+              {/* <div className="col-12 mt-3">
+                <h5 className="border-bottom pb-1 text-primary">Insurance Details</h5>
+              </div> */}
+
+              <div className="col-md-6">
+                <label className="form-label">Insurance Provider</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-building"></i></span>
+                  <input
+                    name="insuranceProvider"
+                    className="form-control"
+                    onChange={handleChange}
+                    placeholder="Enter insurance company name"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label">Policy Number</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-card-text"></i></span>
+                  <input
+                    name="insurancePolicyNumber"
+                    className="form-control"
+                    onChange={handleChange}
+                    placeholder="Enter policy number"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label">Expiry Date</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-calendar-x"></i></span>
+                  <input
+                    type="date"
+                    name="insuranceExpiryDate"
+                    className="form-control"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
 
               <div className="col-md-6">
                 <label className="form-label">Image (optional)</label>
@@ -287,11 +343,15 @@ const AddVehicle = () => {
               </div>
             </div>
 
-            <div className="mt-4 d-flex gap-3">
+           <div className="mt-4 d-flex gap-3 justify-content-end">
               <button type="submit" className="btn btn-modern" disabled={submitting}>
                 {submitting ? "Saving..." : "Add Vehicle"}
               </button>
-              <button type="button" className="btn btn-secondary-modern" onClick={() => navigate("/dashboard")}>
+              <button
+                type="button"
+                className="btn btn-secondary-modern"
+                onClick={() => navigate("/dashboard")}
+              >
                 Back to Dashboard
               </button>
             </div>
