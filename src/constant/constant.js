@@ -5,7 +5,7 @@ const constant = {
   REGISTER_API: `${base}/auth/register`,
   FORGOT_API: `${base}/auth/resetpassword`,
   LOGIN_API: `${base}/auth/login`,
-  ADDVEHICLE: `${local}/vehicle/add`,
+  ADDVEHICLE: `${base}/vehicle/add`,
   GETALLVEHICLE: `${base}/vehicle/all`,
   GETVEHICLEBYID: (id) => `${base}/vehicle/${id}`,
   UPDATEVEHICLE: (id) => `${base}/vehicle/${id}`,
