@@ -41,10 +41,10 @@ const Home = () => {
           You have successfully logged in as <strong>{userData?.email}</strong>.
         </p>
         <p>
-          <strong>Role:</strong> {userData?.role}
+          <strong>Role:</strong> {userData?.role || "N/A"}
         </p>
         <p>
-          <strong>User ID:</strong> {userData?.id}
+          <strong>User ID:</strong> {userData?.id || "N/A"}
         </p>
 
         <div className="button-container">
@@ -66,13 +66,16 @@ const Home = () => {
             onClick={() => navigate("/add-employee")}
           >
             ➕ Add Employee
+          </button>
+
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#28a745" }}
             onClick={() => navigate("/ServiceList")}
           >
-           Service List
+            Service List
           </button>
+
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#28a745" }}
