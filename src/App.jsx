@@ -13,6 +13,7 @@ import ForgotPassword from "./component/ForgotPassword/ForgotPassword";
 import NotFound from "./component/NotFoundPage/NotFound";
 import AddVehicle from "./component/Dashboard/screen/addVehicle";
 import VehicleDetails from './component/Dashboard/screen/VehicleDetails';
+import AddEmployee from "./component/Employee/Addemployee";
 import ServiceList from "./component/Service/service";
 import ServiceForm from "./component/Service/serviceForm";
 
@@ -84,8 +85,15 @@ function App() {
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+      <Router>
+        <Routes>
+
+        </Routes>
+      </Router>
+       <Route path="/add-employee" element={<AddEmployee />} />
       </Router>
     </AuthProvider>
+    
   );
 }
 
