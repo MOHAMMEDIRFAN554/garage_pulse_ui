@@ -255,6 +255,49 @@ const AddVehicle = () => {
                   <input name="engineNumber" className="form-control" onChange={handleChange} />
                 </div>
               </div>
+              {/* <div className="col-12 mt-3">
+                <h5 className="border-bottom pb-1 text-primary">Insurance Details</h5>
+              </div> */}
+
+              <div className="col-md-6">
+                <label className="form-label">Insurance Provider</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-building"></i></span>
+                  <input
+                    name="insuranceProvider"
+                    className="form-control"
+                    onChange={handleChange}
+                    placeholder="Enter insurance company name"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label">Policy Number</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-card-text"></i></span>
+                  <input
+                    name="insurancePolicyNumber"
+                    className="form-control"
+                    onChange={handleChange}
+                    placeholder="Enter policy number"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label">Expiry Date</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-calendar-x"></i></span>
+                  <input
+                    type="date"
+                    name="insuranceExpiryDate"
+                    className="form-control"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
 
               <div className="col-md-6">
                 <label className="form-label">Image (optional)</label>

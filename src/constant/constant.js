@@ -5,11 +5,11 @@ const constant = {
   REGISTER_API: `${base}/auth/register`,
   FORGOT_API: `${base}/auth/resetpassword`,
   LOGIN_API: `${base}/auth/login`,
-  ADDVEHICLE: `${base}/vehicle/add`,
+  ADDVEHICLE: `${local}/vehicle/add`,
   GETALLVEHICLE: `${base}/vehicle/all`,
   GETVEHICLEBYID: (id) => `${base}/vehicle/${id}`,
   UPDATEVEHICLE: (id) => `${base}/vehicle/${id}`,
   DELETEVEHICLE: (id) => `${base}/vehicle/${id}`,
 };
 
-export default constant;
+export default constant;  
