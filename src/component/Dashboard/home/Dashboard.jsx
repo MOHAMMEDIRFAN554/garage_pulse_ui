@@ -8,6 +8,8 @@ import "./Dashboard.css";
 const Dashboard = () => {
   const [vehicles, setVehicles] = useState([]);
   const [filter, setFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,12 +27,24 @@ const Dashboard = () => {
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
+    setCurrentPage(1);
   };
 
   const filteredVehicles =
     filter === "All"
       ? vehicles
       : vehicles.filter((v) => v.type === filter);
+
+  const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedVehicles = filteredVehicles.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
 
   return (
     <div className="container py-4">
@@ -62,7 +76,7 @@ const Dashboard = () => {
       </div>
 
       <div className="row g-3">
-        {filteredVehicles.map((v) => (
+        {paginatedVehicles.map((v) => (
           <div key={v._id} className="col-sm-6 col-md-4 col-lg-3">
             <div
               className="card vehicle-card h-100 shadow-sm"
@@ -94,12 +108,55 @@ const Dashboard = () => {
             </div>
           </div>
         ))}
+
         {filteredVehicles.length === 0 && (
           <div className="col-12 text-center text-muted mt-4">
             No vehicles added yet.
           </div>
         )}
       </div>
+
+      {filteredVehicles.length > itemsPerPage && (
+        <nav className="mt-4">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Previous
+              </button>
+            </li>
+
+            {Array.from({ length: totalPages }, (_, i) => (
+              <li
+                key={i}
+                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              </li>
+            ))}
+
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
     </div>
   );
 };
