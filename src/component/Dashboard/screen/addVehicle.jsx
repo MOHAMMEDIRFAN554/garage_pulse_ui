@@ -42,6 +42,7 @@ const AddVehicle = () => {
   const [vehicle, setVehicle] = useState({
     type: "",
     registrationNumber: "",
+    ownerName: "",
     manufacturer: "",
     model: "",
     makeYear: "",
@@ -55,6 +56,7 @@ const AddVehicle = () => {
     lastServiceKM: "",
     isNew: false
   });
+
 
   const [manufacturers, setManufacturers] = useState([]);
   const [models, setModels] = useState([]);
@@ -94,30 +96,43 @@ const AddVehicle = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const required = ["type", "registrationNumber", "manufacturer", "model", "makeYear", "fuelType", "runningKM", "servicePeriodYears", "servicePeriodKM"];
-  for (let k of required) {
-    if (!vehicle[k]) {
-      setToast({ show: true, type: "danger", msg: `Please fill ${k}` });
-      return;
+    const required = ["type", "registrationNumber", "manufacturer", "model", "makeYear", "fuelType", "runningKM", "servicePeriodYears", "servicePeriodKM"];
+    for (let k of required) {
+      if (!vehicle[k]) {
+        setToast({ show: true, type: "danger", msg: `Please fill ${k}` });
+        return;
+      }
     }
-  }
 
-  let base64Image = "";
-  if (imageFile) {
-    const reader = new FileReader();
-    reader.readAsDataURL(imageFile);
-    reader.onloadend = async () => {
-      base64Image = reader.result;
+    let base64Image = "";
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = async () => {
+        base64Image = reader.result;
 
+        try {
+          setSubmitting(true);
+          const res = await axiosInstance.post(constant.ADDVEHICLE, {
+            ...vehicle,
+            image: base64Image,
+          });
+
+          setToast({ show: true, type: "success", msg: res.data.msg || "Vehicle added" });
+          setTimeout(() => navigate("/dashboard"), 900);
+        } catch (err) {
+          console.error(err);
+          setToast({ show: true, type: "danger", msg: err.response?.data?.error || "Failed to add vehicle" });
+        } finally {
+          setSubmitting(false);
+        }
+      };
+    } else {
       try {
         setSubmitting(true);
-        const res = await axiosInstance.post(constant.ADDVEHICLE, {
-          ...vehicle,
-          image: base64Image,
-        });
-
+        const res = await axiosInstance.post(constant.ADDVEHICLE, vehicle);
         setToast({ show: true, type: "success", msg: res.data.msg || "Vehicle added" });
         setTimeout(() => navigate("/dashboard"), 900);
       } catch (err) {
@@ -126,21 +141,8 @@ const AddVehicle = () => {
       } finally {
         setSubmitting(false);
       }
-    };
-  } else {
-    try {
-      setSubmitting(true);
-      const res = await axiosInstance.post(constant.ADDVEHICLE, vehicle);
-      setToast({ show: true, type: "success", msg: res.data.msg || "Vehicle added" });
-      setTimeout(() => navigate("/dashboard"), 900);
-    } catch (err) {
-      console.error(err);
-      setToast({ show: true, type: "danger", msg: err.response?.data?.error || "Failed to add vehicle" });
-    } finally {
-      setSubmitting(false);
     }
-  }
-};
+  };
 
 
   const getValidationClass = (value) => value ? "is-valid" : "is-invalid";
@@ -181,6 +183,20 @@ const AddVehicle = () => {
                   <input name="registrationNumber" className={`form-control ${getValidationClass(vehicle.registrationNumber)}`} onChange={handleChange} />
                 </div>
               </div>
+              <div className="col-md-6">
+                <label className="form-label">Owner Name</label>
+                <div className="input-group">
+                  <span className="input-group-text"><i className="bi bi-person-circle"></i></span>
+                  <input
+                    name="ownerName"
+                    className={`form-control ${getValidationClass(vehicle.ownerName)}`}
+                    value={vehicle.ownerName}
+                    onChange={handleChange}
+                    placeholder="Enter owner name"
+                  />
+                </div>
+              </div>
+
 
               <div className="col-md-6">
                 <label className="form-label">Manufacturer</label>
@@ -343,7 +359,7 @@ const AddVehicle = () => {
               </div>
             </div>
 
-           <div className="mt-4 d-flex gap-3 justify-content-end">
+            <div className="mt-4 d-flex gap-3 justify-content-end">
               <button type="submit" className="btn btn-modern" disabled={submitting}>
                 {submitting ? "Saving..." : "Add Vehicle"}
               </button>

@@ -13,7 +13,7 @@ import ForgotPassword from "./component/ForgotPassword/ForgotPassword";
 import NotFound from "./component/NotFoundPage/NotFound";
 import AddVehicle from "./component/Dashboard/screen/addVehicle";
 import VehicleDetails from './component/Dashboard/screen/VehicleDetails';
-import ServiceList from "./component/Service/service";
+import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
 
 function App() {
@@ -64,16 +64,31 @@ function App() {
           />
           <Route path="/vehicle/:id" element={<ProtectedRoute><VehicleDetails /></ProtectedRoute>} />
 
-          <Route path="/ServiceList" element={
-            <ProtectedRoute>
-              <ServiceList />
-            </ProtectedRoute>
-          } />
-          <Route path="/ServiceForm" element={
-            <ProtectedRoute>
-              <ServiceForm />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/ServiceList"
+            element={
+              <ProtectedRoute>
+                <ServiceList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ServiceForm"
+            element={
+              <ProtectedRoute>
+                <ServiceForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/editService/:id"
+            element={
+              <ProtectedRoute>
+                <ServiceForm />
+              </ProtectedRoute>
+            }
+          />
+
 
           <Route path="/dashboard" element={
             <ProtectedRoute>
