@@ -59,6 +59,20 @@ const Home = () => {
           >
             ➕ Add Vehicle
           </button>
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/ServiceList")}
+          >
+           Service List
+          </button>
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/ServiceForm")}
+          >
+            Service Form
+          </button>
         </div>
       </div>
     </div>
