@@ -104,7 +104,6 @@ function App() {
 
         </Routes>
       </Router>
-       <Route path="/add-employee" element={<AddEmployee />} />
       </Router>
     </AuthProvider>
     
