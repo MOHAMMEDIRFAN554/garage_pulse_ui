@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../component/Login/axiosConfig";
 import constant from "../../constant/constant";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./ServiceForm.css";
+import "./serviceForm.css";
 
 const ServiceForm = () => {
   const navigate = useNavigate();
