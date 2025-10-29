@@ -60,8 +60,9 @@ const ServiceForm = () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get(
-        `${constant.GETVEHICLEBYNUMBER}/${formData.vehicleNumber}`
+        `${constant.GETSERVICEVEHICLEBYNUMBER}/${formData.vehicleNumber}`
       );
+
       const vehicleData =
         res?.data?.vehicle || res?.data?.data || res?.data || null;
 
@@ -129,7 +130,7 @@ const ServiceForm = () => {
                 className="form-control"
                 placeholder="Enter Vehicle Registration Number"
                 required
-                disabled={isEdit} 
+                disabled={isEdit}
               />
               {!isEdit && (
                 <button

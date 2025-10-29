@@ -13,6 +13,7 @@ const constant = {
   CREATESERVICE: `${local}/service/createService`,
   GETALLSERVICE: `${local}/service/getAllService`,
   GETSERVICEBYID: (id) => `${local}/service/getServiceById/${id}`,
+  GETSERVICEVEHICLEBYNUMBER: `${local}/service/vehicle`,
   UPDATESERVICE: (id) => `${local}/service/updateService/${id}`,
   GETSERVICEBYID: (id) => `${local}/service/getServiceById/${id}`,
   DELETESERVICE: (id) => `${local}/service/deleteService/${id}`,
