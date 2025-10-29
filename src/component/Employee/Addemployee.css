@@ -1,103 +1,101 @@
 .add-employee-card {
-  max-width: 900px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  border: none;
-  background: #ffffff;
+  max-width: 1100px;
+  width: 90%;
+  margin: 30px auto;
+  border-radius: 20px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.2),
+              -5px -5px 15px rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+.add-employee-card:hover {
+  transform: translateY(-3px);
 }
 
 .add-employee-card .card-body {
-  padding: 2rem;
+  padding: 2.5rem;
 }
 
 .add-employee-card .card-title {
-  font-weight: 600;
   text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
   color: #333;
-  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
 }
 
-/* Input and Select Styles */
+
 .input-group-text {
-  background-color: #f7f7f7;
-  border-right: 0;
+  background: #f8f9fa;
+  border-radius: 6px 0 0 6px;
+  border: 1px solid #dcdcdc;
 }
 
 .form-control,
 .form-select {
-  border-radius: 8px;
-  box-shadow: none !important;
-  border: 1px solid #ced4da;
-  transition: all 0.2s ease-in-out;
+  border-radius: 0 6px 6px 0;
+  border: 1px solid #dcdcdc;
+  transition: all 0.3s ease-in-out;
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+  border-color: #0d6efd;
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
 }
 
-/* Toast (Alert) Styling */
-.custom-toast {
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  padding: 10px 15px;
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-/* Buttons */
-.btn-modern {
-  background-color: #007bff;
-  border: none;
-  color: white;
-  font-weight: 500;
-  border-radius: 10px;
-  padding: 10px 20px;
-  transition: all 0.3s ease-in-out;
-}
-
-.btn-modern:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary-modern {
-  background-color: #6c757d;
-  border: none;
-  color: white;
-  font-weight: 500;
-  border-radius: 10px;
-  padding: 10px 20px;
-  transition: all 0.3s ease-in-out;
-}
-
-.btn-secondary-modern:hover {
-  background-color: #565e64;
-}
-
-/* Validation states */
 .is-valid {
-  border-color: #198754 !important;
+  border-color: #28a745 !important;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.4);
 }
 
 .is-invalid {
   border-color: #dc3545 !important;
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.4);
 }
 
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .add-employee-card {
-    max-width: 100%;
-    margin: 0 10px;
-  }
-
-  .add-employee-card .card-body {
-    padding: 1.5rem;
-  }
+.btn-modern {
+  padding: 12px 20px;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  background: #0d6efd;
+  border: none;
+  color: #fff;
 }
 
-/* Subtle animation for form appearance */
+.btn-modern:hover {
+  transform: scale(1.03);
+  box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
+}
+
+.btn-secondary-modern {
+  background: #adb5bd;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary-modern:hover {
+  background: #868e96;
+  transform: scale(1.03);
+}
+
+
+.custom-toast {
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  font-weight: 500;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -106,5 +104,21 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+
+@media (max-width: 768px) {
+  .add-employee-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .btn-modern,
+  .btn-secondary-modern {
+    width: 100%;
+  }
+
+  .add-employee-card {
+    width: 95%;
   }
 }
