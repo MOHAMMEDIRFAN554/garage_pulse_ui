@@ -63,7 +63,7 @@ const Home = () => {
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/add-employee")}
+            onClick={() => navigate("/AddEmployee")}
           >
             ➕ Add Employee
           </button>

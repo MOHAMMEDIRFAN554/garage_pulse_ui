@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import axiosInstance from "../Login/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import constant from "../constant/constant";
 import "./AddEmployee.css";
-import constant from "../constant/constant";
+import constant from "../../constant/constant";
 
 
 const AddEmployee = () => {
