@@ -15,7 +15,7 @@ import AddVehicle from "./component/Dashboard/screen/addVehicle";
 import VehicleDetails from "./component/Dashboard/screen/VehicleDetails";
 import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
-
+import AddEmployee from "./component/Employee/Addemployee";
 
 function App() {
   return (
@@ -112,6 +112,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AddEmployee"
+            element={
+              <ProtectedRoute>
+                <AddEmployee />
               </ProtectedRoute>
             }
           />

@@ -17,6 +17,7 @@ const constant = {
   GETSERVICEBYID: (id) => `${base}/service/getServiceById/${id}`,
   DELETESERVICE: (id) => `${base}/service/deleteService/${id}`,
   GETVEHICLEBYNUMBER: `${base}/service/vehicle`,
+  ADDEMPLOYEE: `${base}/employee/add`
 
 };
 
