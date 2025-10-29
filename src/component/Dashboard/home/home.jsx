@@ -83,6 +83,14 @@ const Home = () => {
           >
             Service Form
           </button>
+
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/DeleteVehicle")}
+          >
+            Delete Vehicle 
+          </button>
         </div>
       </div>
     </div>

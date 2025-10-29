@@ -16,6 +16,7 @@ import VehicleDetails from "./component/Dashboard/screen/VehicleDetails";
 import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
 import AddEmployee from "./component/Employee/Addemployee";
+import DeleteVehicle from "./component/Dashboard/screen/deleteVehicle";
 
 function App() {
   return (
@@ -120,6 +121,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AddEmployee />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/DeleteVehicle"
+            element={
+              <ProtectedRoute>
+                <DeleteVehicle />
               </ProtectedRoute>
             }
           />
