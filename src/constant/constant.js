@@ -19,8 +19,7 @@ const constant = {
   DELETESERVICE: (id) => `${base}/service/deleteService/${id}`,
   GETVEHICLEBYNUMBER: `${base}/service/vehicle`,
   ADDEMPLOYEE: `${base}/employee/add`,
-   GETVEHICLEBYNUMBER: `${base}/vehicle/number`, 
-  DELETEVEHICLE: `${base}/vehicle`, 
+  DLGETVEHICLEBYNUMBER: `${base}/vehicle/number`, 
 };
 
 export default constant;  

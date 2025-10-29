@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../component/Login/axiosConfig";
 import constant from "../../../constant/constant";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./deleteVehicle.css"; 
+import "./deleteVehicle.css";
 
 const DeleteVehicle = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
@@ -19,7 +19,7 @@ const DeleteVehicle = () => {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `${constant.GETVEHICLEBYNUMBER}/${registrationNumber}`
+        `${constant.DLGETVEHICLEBYNUMBER}/${registrationNumber}`
       );
 
       const vehicle = res?.data?.vehicle || res?.data?.data || res?.data || null;
@@ -50,7 +50,7 @@ const DeleteVehicle = () => {
     if (!confirmDelete) return;
 
     try {
-      await axiosInstance.delete(`${constant.DELETEVEHICLE}/${vehicleData._id}`);
+      await axiosInstance.delete(constant.DELETEVEHICLE(vehicleData._id));
       alert("Vehicle deleted successfully!");
       setVehicleData(null);
       setRegistrationNumber("");
