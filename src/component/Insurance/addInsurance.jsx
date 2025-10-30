@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./AddInsurance.css"; 
+import "./addInsurance.css"; 
 
 const AddInsurance = () => {
   const [vehicles, setVehicles] = useState([]);
