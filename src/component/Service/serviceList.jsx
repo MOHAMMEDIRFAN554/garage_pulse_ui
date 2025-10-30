@@ -46,7 +46,7 @@ const ServiceList = () => {
 
   return (
     <div className="container py-4">
-      <div>
+      <div className="service-card">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="card-title m-0">Service Management</h2>
           <div className="d-flex gap-2">

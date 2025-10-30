@@ -49,56 +49,49 @@ const Home = () => {
 
         <div className="button-container">
           <button className="home-btn" onClick={() => navigate("/dashboard")}>
-            Go to Dashboard
-          </button>
+  <span className="icon">🚗</span> Vehicle Dashboard
+</button>
 
-          <button
-            className="home-btn add-btn"
-            style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/addVehicle")}
-          >
-            ➕ Add Vehicle
-          </button>
+<button
+  className="home-btn add-btn"
+  style={{ backgroundColor: "#28a745" }}
+  onClick={() => navigate("/addVehicle")}
+>
+  <span className="icon">➕</span> Add Vehicle
+</button>
 
-          <button
-            className="home-btn add-btn"
-            style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/AddEmployee")}
-          >
-            ➕ Add Employee
-          </button>
+<button className="home-btn" onClick={() => navigate("/EmployeList")}>
+  <span className="icon">👥</span> Employee List
+</button>
 
-          <button
-            className="home-btn add-btn"
-            style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/EmployeList")} 
-          >
-             Employee List 
-          </button>
+<button
+  className="home-btn add-btn"
+  style={{ backgroundColor: "#28a745" }}
+  onClick={() => navigate("/AddEmployee")}
+>
+  <span className="icon">➕</span> Add Employee
+</button>
 
-          <button
-            className="home-btn add-btn"
-            style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/ServiceList")}
-          >
-            Service List
-          </button>
+<button className="home-btn" onClick={() => navigate("/ServiceList")}>
+  <span className="icon">🧾</span> Service List
+</button>
 
-          <button
-            className="home-btn add-btn"
-            style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/ServiceForm")}
-          >
-            Service Form
-          </button>
+<button
+  className="home-btn add-btn"
+  style={{ backgroundColor: "#28a745" }}
+  onClick={() => navigate("/ServiceForm")}
+>
+  <span className="icon">➕</span> Add Service
+</button>
 
-          <button
-            className="home-btn add-btn"
-            style={{ backgroundColor: "#28a745" }}
-            onClick={() => navigate("/DeleteVehicle")}
-          >
-            Delete Vehicle 
-          </button>
+<button
+  className="home-btn add-btn"
+  style={{ backgroundColor: "#28a745" }}
+  onClick={() => navigate("/DeleteVehicle")}
+>
+  <span className="icon">🗑️</span> Delete Vehicle
+</button>
+
         </div>
       </div>
     </div>
