@@ -5,24 +5,27 @@ import constant from "../../constant/constant";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./EmployeList.css";
 
-
-const Dashboard = () => {
-  const [vehicles, setVehicles] = useState([]);
+const EmployeeList = () => {
+  const [employees, setEmployees] = useState([]);
   const [filter, setFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; 
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const itemsPerPage = 4;
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchVehicles();
+    fetchEmployees();
   }, []);
 
-  const fetchVehicles = async () => {
+  const fetchEmployees = async () => {
     try {
-      const response = await axiosInstance.get(constant.GETALLVEHICLE);
-      setVehicles(response.data.vehicles || []);
+      const response = await axiosInstance.get(constant.GETALLEMPLOYEE, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setEmployees(response.data.employees || []);
     } catch (error) {
-      console.error("Error fetching vehicles", error);
+      console.error("Error fetching employees", error);
     }
   };
 
@@ -31,14 +34,14 @@ const Dashboard = () => {
     setCurrentPage(1);
   };
 
-  const filteredVehicles =
+  const filteredEmployees =
     filter === "All"
-      ? vehicles
-      : vehicles.filter((v) => v.type === filter);
+      ? employees
+      : employees.filter((emp) => emp.role === filter);
 
-  const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedVehicles = filteredVehicles.slice(
+  const paginatedEmployees = filteredEmployees.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -47,15 +50,45 @@ const Dashboard = () => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
+  const formatRoleForDisplay = (role) => {
+    const roleDisplayMap = {
+      driver: "Driver",
+      "co-driver": "Co-Driver",
+      mechanic: "Mechanic",
+    };
+    return roleDisplayMap[role] || role;
+  };
+
+  // 🔹 Fetch full employee details when card clicked
+  const handleEmployeeClick = async (empId) => {
+    setLoadingDetails(true);
+    try {
+      const response = await axiosInstance.get(constant.GETEMPLOYEEBYID(empId), {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setSelectedEmployee(response.data.employee);
+    } catch (error) {
+      console.error("Error fetching employee details", error);
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="m-0">Dashboard - Employees</h2>
         <div className="d-flex gap-2">
-          <button className="btn btn-outline-secondary" onClick={() => navigate("/home")}>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/home")}
+          >
             Back to Home
           </button>
-          <button className="btn btn-primary" onClick={() => navigate("/Addemployee")}>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/Addemployee")}
+          >
             Add Employee
           </button>
         </div>
@@ -69,54 +102,50 @@ const Dashboard = () => {
           value={filter}
         >
           <option value="All">All</option>
-          <option value="Driver">Driver</option>
-          <option value="co-driver">co-driver</option>
-          <option value="Mechanic">Mechanic</option>
+          <option value="driver">Driver</option>
+          <option value="co-driver">Co-Driver</option>
+          <option value="mechanic">Mechanic</option>
         </select>
       </div>
 
       <div className="row g-3">
-        {paginatedVehicles.map((v) => (
-          <div key={v._id} className="col-sm-6 col-md-4 col-lg-3">
+        {paginatedEmployees.map((emp) => (
+          <div key={emp._id} className="col-sm-6 col-md-4 col-lg-3">
             <div
-              className="card vehicle-card h-100 shadow-sm"
-              onClick={() => navigate(`/vehicle/${v._id}`)}
+              className="card employee-card h-100 shadow-sm"
+              onClick={() => handleEmployeeClick(emp._id)} // 🔹 Fetch & show details
               style={{ cursor: "pointer" }}
             >
-              {v.image ? (
+              {emp.image ? (
                 <img
-                  src={
-                    v.image.startsWith("/uploads")
-                      ? `${v.image}`
-                      : v.image
-                  }
-                  className="card-img-top vehicle-img"
-                  alt={v.registrationNumber}
+                  src={emp.image}
+                  className="card-img-top employee-img"
+                  alt={emp.name}
                 />
               ) : (
-                <div className="vehicle-img-placeholder">No Image</div>
+                <div className="employee-img-placeholder bg-light d-flex align-items-center justify-content-center">
+                  <i className="bi bi-person-circle fs-1 text-secondary"></i>
+                </div>
               )}
-              <div className="card-body">
-                <h5 className="card-title">{v.registrationNumber}</h5>
-                <p className="card-text mb-1">
-                  {v.manufacturer} — {v.model}
-                </p>
-                <p className="card-text small">
-                  Type: {v.type} | KM: {v.runningKM}
+              <div className="card-body text-center">
+                <h5 className="card-title mb-1">{emp.name}</h5>
+                <p className="card-text small mb-1">{emp.email}</p>
+                <p className="card-text text-muted small">
+                  Role: {formatRoleForDisplay(emp.role)}
                 </p>
               </div>
             </div>
           </div>
         ))}
 
-        {filteredVehicles.length === 0 && (
+        {filteredEmployees.length === 0 && (
           <div className="col-12 text-center text-muted mt-4">
             No Employees added yet.
           </div>
         )}
       </div>
 
-      {filteredVehicles.length > itemsPerPage && (
+      {filteredEmployees.length > itemsPerPage && (
         <nav className="mt-4">
           <ul className="pagination justify-content-center">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
@@ -157,8 +186,64 @@ const Dashboard = () => {
           </ul>
         </nav>
       )}
+
+      {/* 🔹 Employee Detail Popup */}
+      {selectedEmployee && (
+        <div
+          className="employee-modal-overlay"
+          onClick={() => setSelectedEmployee(null)}
+        >
+          <div className="employee-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="text-end">
+              <button
+                className="btn-close"
+                onClick={() => setSelectedEmployee(null)}
+              ></button>
+            </div>
+
+            {loadingDetails ? (
+              <div className="text-center py-4">Loading...</div>
+            ) : (
+              <div className="text-center">
+                {selectedEmployee.image ? (
+                  <img
+                    src={selectedEmployee.image}
+                    className="rounded-circle mb-3"
+                    alt={selectedEmployee.name}
+                    width="120"
+                    height="120"
+                  />
+                ) : (
+                  <i className="bi bi-person-circle fs-1 text-secondary mb-3"></i>
+                )}
+                <h5>{selectedEmployee.name}</h5>
+                <p className="mb-1">{selectedEmployee.email}</p>
+                <p className="mb-1">
+                  <strong>Phone:</strong> {selectedEmployee.phone || "N/A"}
+                </p>
+                <p className="mb-1">
+                  <strong>Address:</strong> {selectedEmployee.address || "N/A"}
+                </p>
+                <p className="mb-1">
+                  <strong>Salary:</strong> ₹{selectedEmployee.salary || "N/A"}
+                </p>
+                <p className="mb-1">
+                  <strong>Joining Date:</strong>{" "}
+                  {selectedEmployee.joiningDate
+                    ? new Date(selectedEmployee.joiningDate).toLocaleDateString()
+                    : "N/A"}
+                </p>
+                <p className="text-muted mb-0">
+                  <strong>Role:</strong>{" "}
+                  {formatRoleForDisplay(selectedEmployee.role)}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Dashboard;
+export default EmployeeList;
