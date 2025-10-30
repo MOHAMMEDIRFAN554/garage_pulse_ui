@@ -71,6 +71,14 @@ const Home = () => {
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/EmployeList")} 
+          >
+             Employee List 
+          </button>
+
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
             onClick={() => navigate("/ServiceList")}
           >
             Service List
