@@ -20,7 +20,7 @@ import ServiceForm from "./component/Service/serviceForm";
 import AddEmployee from "./component/Employee/Addemployee";
 import AddInsurance from "./component/Insurance/addInsurance"; 
 
-import AddEmployee from "./component/Employee/Addemployee";
+// import AddEmployee from "./component/Employee/Addemployee";
 import EmployeList from "./component/Employee/EmployeList";
 import DeleteEmployee from "./component/Employee/deleteEmployee";
 

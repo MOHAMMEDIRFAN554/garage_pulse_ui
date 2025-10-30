@@ -26,7 +26,7 @@ const constant = {
   DLGETVEHICLEBYNUMBER: `${base}/vehicle/number`, 
   GETALLEMPLOYEE: `${base}/employee/getAllEmployee`,
   GETEMPLOYEEBYID: (id) => `${base}/employee/getEmployee/${id}`,
-   DELETEEMPLOYEE: (id) => `${base}/employee/${id}`,
+  DELETEEMPLOYEE: (id) => `${base}/employee/${id}`,
 
 };
 
