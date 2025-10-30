@@ -19,8 +19,9 @@ import DeleteVehicle from "./component/Dashboard/screen/deleteVehicle";
 import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
 
-import AddEmployee from "./component/Employee/AddEmployee";
+import AddEmployee from "./component/Employee/Addemployee";
 import EmployeList from "./component/Employee/EmployeList";
+import DeleteEmployee from "./component/Employee/deleteEmployee";
 
 function App() {
   return (
@@ -144,6 +145,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <EmployeList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/DeleteEmployee"
+            element={
+              <ProtectedRoute>
+                <DeleteEmployee />
               </ProtectedRoute>
             }
           />

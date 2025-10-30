@@ -1,5 +1,9 @@
-const base = "https://garage-pulse-api.onrender.com"; 
 const local = "http://localhost:4500"
+
+const render = "https://garage-pulse-api.onrender.com";
+
+const base = local 
+
 
 const constant = {
   REGISTER_API: `${base}/auth/register`,
@@ -20,6 +24,10 @@ const constant = {
   GETVEHICLEBYNUMBER: `${base}/service/vehicle`,
   ADDEMPLOYEE: `${base}/employee/add`,
   DLGETVEHICLEBYNUMBER: `${base}/vehicle/number`, 
+  GETALLEMPLOYEE: `${base}/employee/getAllEmployee`,
+  GETEMPLOYEEBYID: (id) => `${base}/employee/getEmployee/${id}`,
+   DELETEEMPLOYEE: (id) => `${base}/employee/${id}`,
+
 };
 
 export default constant;  

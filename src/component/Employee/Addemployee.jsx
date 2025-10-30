@@ -5,7 +5,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./AddEmployee.css";
 import constant from "../../constant/constant";
 
-
 const AddEmployee = () => {
   const navigate = useNavigate();
 
@@ -17,10 +16,12 @@ const AddEmployee = () => {
     address: "",
     joiningDate: "",
     licenseNumber: "",
-    role: ""
+    role: "",
+    experience: "",
   });
 
   const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", msg: "" });
 
@@ -28,12 +29,19 @@ const AddEmployee = () => {
     const { name, value } = e.target;
     setEmployee((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleFile = (e) => {
-    setImageFile(e.target.files[0]);
+    const file = e.target.files[0];
+    setImageFile(file);
+    if (file) {
+      const previewURL = URL.createObjectURL(file);
+      setPreview(previewURL);
+    } else {
+      setPreview(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -47,29 +55,45 @@ const AddEmployee = () => {
       }
     }
 
-    const formData = new FormData();
-    Object.keys(employee).forEach((k) => {
-      if (employee[k] !== undefined && employee[k] !== null && employee[k] !== "") {
-        formData.append(k, employee[k]);
-      }
-    });
-
-    if (imageFile) formData.append("photo", imageFile);
-
     try {
       setSubmitting(true);
-      const res = await axiosInstance.post(constant.ADDEMPLOYEE, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+
+      let base64Image = "";
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.readAsDataURL(imageFile);
+        await new Promise((resolve) => {
+          reader.onload = () => {
+            base64Image = reader.result;
+            resolve();
+          };
+        });
+      }
+
+      const payload = { ...employee, image: base64Image };
+
+      await axiosInstance.post(constant.ADDEMPLOYEE, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
-      setToast({ show: true, type: "success", msg: res.data.msg || "Employee added successfully" });
-      setTimeout(() => navigate("/dashboard"), 900);
+      setToast({
+        show: true,
+        type: "success",
+        msg: "Employee added successfully",
+      });
+
+      setTimeout(() => navigate("/EmployeList"), 1500);
     } catch (err) {
-      console.error(err);
       setToast({
         show: true,
         type: "danger",
-        msg: err.response?.data?.error || "Failed to add employee"
+        msg:
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Failed to add employee",
       });
     } finally {
       setSubmitting(false);
@@ -85,79 +109,100 @@ const AddEmployee = () => {
           <h4 className="card-title mb-3">Add Employee</h4>
 
           {toast.show && (
-            <div className={`alert alert-${toast.type} custom-toast`} role="alert">
+            <div
+              className={`alert alert-${toast.type} custom-toast`}
+              role="alert"
+            >
               {toast.msg}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <form onSubmit={handleSubmit}>
             <div className="row g-3">
-
               <div className="col-md-6">
-                <label className="form-label">Full Name</label>
+                <label className="form-label">Full Name *</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-person"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-person"></i>
+                  </span>
                   <input
                     name="name"
+                    value={employee.name}
                     className={`form-control ${getValidationClass(employee.name)}`}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
 
               <div className="col-md-6">
-                <label className="form-label">Email</label>
+                <label className="form-label">Email *</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-envelope"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-envelope"></i>
+                  </span>
                   <input
                     name="email"
                     type="email"
+                    value={employee.email}
                     className={`form-control ${getValidationClass(employee.email)}`}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
 
               <div className="col-md-6">
-                <label className="form-label">Password</label>
+                <label className="form-label">Password *</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-lock"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-lock"></i>
+                  </span>
                   <input
                     name="password"
                     type="password"
+                    value={employee.password}
                     className={`form-control ${getValidationClass(employee.password)}`}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
 
               <div className="col-md-6">
-                <label className="form-label">Phone Number</label>
+                <label className="form-label">Phone Number *</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-telephone"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-telephone"></i>
+                  </span>
                   <input
                     name="phone"
                     type="tel"
+                    value={employee.phone}
                     className={`form-control ${getValidationClass(employee.phone)}`}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
 
               <div className="col-md-6">
-                <label className="form-label">Role</label>
+                <label className="form-label">Role *</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-person-badge"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-person-badge"></i>
+                  </span>
                   <select
                     name="role"
                     className={`form-select ${getValidationClass(employee.role)}`}
                     value={employee.role}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Select Role</option>
-                    <option>Driver</option>
-                    <option>Co-driver</option>
-                    <option>Mechanical</option>
+                    <option value="driver">Driver</option>
+                    <option value="co-driver">Co-Driver</option>
+                    <option value="mechanic">Mechanic</option>
                   </select>
                 </div>
               </div>
@@ -165,10 +210,13 @@ const AddEmployee = () => {
               <div className="col-md-6">
                 <label className="form-label">Joining Date</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-calendar3"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-calendar3"></i>
+                  </span>
                   <input
                     name="joiningDate"
                     type="date"
+                    value={employee.joiningDate}
                     className="form-control"
                     onChange={handleChange}
                   />
@@ -178,10 +226,13 @@ const AddEmployee = () => {
               <div className="col-md-6">
                 <label className="form-label">Experience (Years)</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-award"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-award"></i>
+                  </span>
                   <input
                     name="experience"
                     type="number"
+                    value={employee.experience}
                     className="form-control"
                     onChange={handleChange}
                     min="0"
@@ -192,9 +243,12 @@ const AddEmployee = () => {
               <div className="col-md-6">
                 <label className="form-label">License Number (optional)</label>
                 <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-card-text"></i></span>
+                  <span className="input-group-text">
+                    <i className="bi bi-card-text"></i>
+                  </span>
                   <input
                     name="licenseNumber"
+                    value={employee.licenseNumber}
                     className="form-control"
                     onChange={handleChange}
                   />
@@ -207,6 +261,7 @@ const AddEmployee = () => {
                   name="address"
                   className="form-control"
                   rows="2"
+                  value={employee.address}
                   onChange={handleChange}
                 ></textarea>
               </div>
@@ -219,23 +274,41 @@ const AddEmployee = () => {
                   className="form-control"
                   onChange={handleFile}
                 />
-              </div>
 
+                {preview && (
+                  <div className="mt-3 text-center">
+                    <img
+                      src={preview}
+                      alt="Preview"
+                      className="img-fluid rounded shadow-sm"
+                      style={{
+                        width: "150px",
+                        height: "150px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="mt-4 d-flex gap-3">
-              <button type="submit" className="btn btn-modern" disabled={submitting}>
+              <button
+                type="submit"
+                className="btn btn-modern"
+                disabled={submitting}
+              >
                 {submitting ? "Saving..." : "Add Employee"}
               </button>
               <button
                 type="button"
                 className="btn btn-secondary-modern"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/EmployeList")}
               >
-                Back to Dashboard
+                Back to Employee List
               </button>
             </div>
-
           </form>
         </div>
       </div>
