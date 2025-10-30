@@ -75,6 +75,8 @@ const ServiceList = () => {
               <table className="table table-hover align-middle mb-0 service-table">
                 <thead className="table-light">
                   <tr>
+                    <th>Vehicle</th>
+                    <th>Registration No</th>
                     <th>Service Type</th>
                     <th>Description</th>
                     <th>Cost (₹)</th>
@@ -84,6 +86,14 @@ const ServiceList = () => {
                 <tbody>
                   {services.map((service) => (
                     <tr key={service._id}>
+                      <td className="text-capitalize">
+                        {service.manufacturer && service.model
+                          ? `${service.manufacturer} ${service.model}`
+                          : "N/A"}
+                      </td>
+                      <td className="text-uppercase">
+                        {service.vehicleNumber || "N/A"}
+                      </td>
                       <td
                         className="fw-semibold text-primary text-capitalize pointer"
                         onClick={() => handleView(service)}
@@ -123,7 +133,6 @@ const ServiceList = () => {
         </div>
       </div>
 
-      {/* ====== Modal for Service Details ====== */}
       {showModal && selectedService && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -140,7 +149,13 @@ const ServiceList = () => {
               </div>
               <div className="modal-body">
                 <p>
-                  <strong>Vehicle Number:</strong>{" "}
+                  <strong>Vehicle:</strong>{" "}
+                  {selectedService.manufacturer && selectedService.model
+                    ? `${selectedService.manufacturer} ${selectedService.model}`
+                    : "N/A"}
+                </p>
+                <p>
+                  <strong>Registration No:</strong>{" "}
                   {selectedService.vehicleNumber}
                 </p>
                 <p>

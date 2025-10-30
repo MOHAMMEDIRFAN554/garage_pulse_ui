@@ -13,12 +13,13 @@ const constant = {
   CREATESERVICE: `${base}/service/createService`,
   GETALLSERVICE: `${base}/service/getAllService`,
   GETSERVICEBYID: (id) => `${base}/service/getServiceById/${id}`,
+  GETSERVICEVEHICLEBYNUMBER: `${base}/service/vehicle`,
   UPDATESERVICE: (id) => `${base}/service/updateService/${id}`,
   GETSERVICEBYID: (id) => `${base}/service/getServiceById/${id}`,
   DELETESERVICE: (id) => `${base}/service/deleteService/${id}`,
   GETVEHICLEBYNUMBER: `${base}/service/vehicle`,
-  ADDEMPLOYEE: `${base}/employee/add`
-
+  ADDEMPLOYEE: `${base}/employee/add`,
+  DLGETVEHICLEBYNUMBER: `${base}/vehicle/number`, 
 };
 
 export default constant;  

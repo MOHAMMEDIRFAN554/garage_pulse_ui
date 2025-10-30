@@ -6,22 +6,28 @@ import PublicRoute from "./Routes/PublicRoute";
 import Landing from "./component/landing/Landing";
 import Registration from "./component/Registration/registration";
 import Login from "./component/Login/Login";
-import Home from "./component/Dashboard/home/home";
-import Dashboard from "./component/Dashboard/home/Dashboard";
 import ForgotPassword from "./component/ForgotPassword/ForgotPassword";
 import NotFound from "./component/NotFoundPage/NotFound";
+
+import Home from "./component/Dashboard/home/home";
+import Dashboard from "./component/Dashboard/home/Dashboard";
 import AddVehicle from "./component/Dashboard/screen/addVehicle";
 import VehicleDetails from "./component/Dashboard/screen/VehicleDetails";
+import DeleteVehicle from "./component/Dashboard/screen/deleteVehicle";
+
 import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
 import AddEmployee from "./component/Employee/Addemployee";
 import AddInsurance from "./component/Insurance/addInsurance"; 
+
+import EmployeList from "./component/Employee/EmployeList";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
+
           <Route path="/" element={<Navigate to="/landing" replace />} />
 
           {/* 🌐 Public Routes */}
@@ -68,6 +74,14 @@ function App() {
             }
           />
           <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/addVehicle"
             element={
               <ProtectedRoute>
@@ -84,7 +98,16 @@ function App() {
             }
           />
           <Route
-            path="/ServiceList"
+            path="/deleteVehicle"
+            element={
+              <ProtectedRoute>
+                <DeleteVehicle />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/serviceList"
             element={
               <ProtectedRoute>
                 <ServiceList />
@@ -92,7 +115,7 @@ function App() {
             }
           />
           <Route
-            path="/ServiceForm"
+            path="/serviceForm"
             element={
               <ProtectedRoute>
                 <ServiceForm />
@@ -107,19 +130,20 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
-            path="/dashboard"
+            path="/addEmployee"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <AddEmployee />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/AddEmployee"
+            path="/EmployeList"
             element={
               <ProtectedRoute>
-                <AddEmployee />
+                <EmployeList />
               </ProtectedRoute>
             }
           />
@@ -136,6 +160,7 @@ function App() {
 
           {/* 🚫 404 Page */}
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </Router>
     </AuthProvider>
