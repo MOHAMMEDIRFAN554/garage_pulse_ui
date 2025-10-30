@@ -24,6 +24,7 @@ import AddInsurance from "./component/Insurance/addInsurance";
 import EmployeList from "./component/Employee/EmployeList";
 import DeleteEmployee from "./component/Employee/deleteEmployee";
 
+
 function App() {
   return (
     <AuthProvider>
@@ -158,7 +159,6 @@ function App() {
             }
           />
 
-          {/* 🆕 Insurance Route */}
           <Route
             path="/insurance"
             element={

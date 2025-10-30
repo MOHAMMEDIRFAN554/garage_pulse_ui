@@ -2,7 +2,7 @@ const local = "http://localhost:4500"
 
 const render = "https://garage-pulse-api.onrender.com";
 
-const base = local 
+const base = render 
 
 
 const constant = {
@@ -27,6 +27,8 @@ const constant = {
   GETALLEMPLOYEE: `${base}/employee/getAllEmployee`,
   GETEMPLOYEEBYID: (id) => `${base}/employee/getEmployee/${id}`,
   DELETEEMPLOYEE: (id) => `${base}/employee/${id}`,
+
+  ADDINSURANCE : `${base}/insurance/add`,
 
 };
 

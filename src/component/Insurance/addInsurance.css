@@ -1,133 +1,44 @@
 .add-insurance-card {
-  max-width: 1100px;
-  width: 90%;
-  margin: 30px auto;
-  border-radius: 20px;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.2),
-              -5px -5px 15px rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease-in-out;
+  max-width: 600px;
+  margin: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 25px;
 }
 
-.add-insurance-card:hover {
-  transform: translateY(-3px);
-}
-
-.add-insurance-card .card-body {
-  padding: 2.5rem;
-}
-
-.add-insurance-card .card-title {
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.form-label {
-  font-weight: 600;
-  color: #333;
-}
-
-.form-control,
-.form-select {
-  border-radius: 6px;
-  border: 1px solid #dcdcdc;
-  padding: 10px 12px;
-  transition: all 0.3s ease-in-out;
-  font-size: 0.95rem;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 6px rgba(13, 110, 253, 0.4);
-  outline: none;
-}
-
-/* Validation */
-.is-valid {
-  border-color: #28a745 !important;
-  box-shadow: 0 0 5px rgba(40, 167, 69, 0.4);
-}
-
-.is-invalid {
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 5px rgba(220, 53, 69, 0.4);
-}
-
-/* Buttons */
 .btn-modern {
-  padding: 12px 20px;
-  font-weight: 600;
-  border-radius: 10px;
-  background: #0d6efd;
+  background-color: #007bff;
+  color: white;
   border: none;
-  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
   transition: all 0.3s ease;
-  cursor: pointer;
 }
 
 .btn-modern:hover {
-  transform: scale(1.03);
-  box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
+  background-color: #0056b3;
 }
 
 .btn-secondary-modern {
-  background: #adb5bd;
+  background-color: #6c757d;
+  color: white;
   border: none;
-  color: #fff;
-  font-weight: 600;
-  border-radius: 10px;
-  padding: 12px 20px;
+  padding: 8px 16px;
+  border-radius: 6px;
   transition: all 0.3s ease;
-  cursor: pointer;
 }
 
 .btn-secondary-modern:hover {
-  background: #868e96;
-  transform: scale(1.03);
+  background-color: #5a6268;
 }
 
-/* Alert */
-.alert {
-  border-radius: 10px;
-  background: rgba(13, 110, 253, 0.1);
-  color: #0d6efd;
-  font-weight: 500;
+.alert-message {
   text-align: center;
-  padding: 12px;
   margin-bottom: 15px;
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .add-insurance-card .card-body {
-    padding: 1.5rem;
-  }
-
-  .btn-modern,
-  .btn-secondary-modern {
-    width: 100%;
-  }
-
-  .add-insurance-card {
-    width: 95%;
-  }
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #e9f7ef;
+  color: #155724;
+  font-weight: 500;
 }

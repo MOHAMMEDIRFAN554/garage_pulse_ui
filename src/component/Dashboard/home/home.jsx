@@ -83,6 +83,13 @@ const Home = () => {
 >
   <span className="icon">➕</span> Add Service
 </button>
+<button
+  className="home-btn add-btn"
+  style={{ backgroundColor: "#28a745" }}
+  onClick={() => navigate("/insurance")}
+>
+  <span className="icon">➕</span> Add Insurance
+</button>
 
 <button
   className="home-btn add-btn"
