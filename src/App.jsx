@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "./component/Login/authContext";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import PublicRoute from "./Routes/PublicRoute";
-
 import Landing from "./component/landing/Landing";
 import Registration from "./component/Registration/registration";
 import Login from "./component/Login/Login";
@@ -18,8 +17,9 @@ import DeleteVehicle from "./component/Dashboard/screen/deleteVehicle";
 
 import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
+import AddEmployee from "./component/Employee/Addemployee";
+import AddInsurance from "./component/Insurance/addInsurance"; 
 
-import AddEmployee from "./component/Employee/AddEmployee";
 import EmployeList from "./component/Employee/EmployeList";
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
 
           <Route path="/" element={<Navigate to="/landing" replace />} />
 
-          {/* Public routes */}
+          {/* 🌐 Public Routes */}
           <Route
             path="/landing"
             element={
@@ -64,7 +64,7 @@ function App() {
             }
           />
 
-          {/* Protected routes */}
+          {/* 🔒 Protected Routes */}
           <Route
             path="/home"
             element={
@@ -148,7 +148,17 @@ function App() {
             }
           />
 
-          {/* 404 Page */}
+          {/* 🆕 Insurance Route */}
+          <Route
+            path="/insurance"
+            element={
+              <ProtectedRoute>
+                <AddInsurance />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 🚫 404 Page */}
           <Route path="*" element={<NotFound />} />
 
         </Routes>
