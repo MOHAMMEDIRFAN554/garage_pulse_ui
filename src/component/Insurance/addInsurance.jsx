@@ -15,11 +15,11 @@ const AddInsurance = () => {
   });
   const [message, setMessage] = useState("");
 
-  // ✅ Fetch vehicles from backend
+  
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const res = await axios.get("http://localhost:4500/api/vehicle");
+        const res = await axios.get("");
         setVehicles(res.data);
       } catch (error) {
         console.error("Error fetching vehicles:", error);
@@ -28,13 +28,13 @@ const AddInsurance = () => {
     fetchVehicles();
   }, []);
 
-  // ✅ Handle input change
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle submit
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -42,7 +42,7 @@ const AddInsurance = () => {
       await axios.post("http://localhost:4500/api/insurance", formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMessage("✅ Insurance added successfully!");
+      setMessage("Insurance added successfully!");
       setFormData({
         vehicleId: "",
         provider: "",
@@ -54,7 +54,7 @@ const AddInsurance = () => {
       });
     } catch (error) {
       console.error("Error adding insurance:", error);
-      setMessage("❌ Failed to add insurance. Please try again.");
+      setMessage("Failed to add insurance. Please try again.");
     }
   };
 
