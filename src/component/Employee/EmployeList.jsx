@@ -3,7 +3,7 @@ import axiosInstance from "../Login/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import constant from "../../constant/constant";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./EmployeList.css";
+import "./employeList.css";
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
