@@ -9,6 +9,9 @@ const Dashboard = () => {
   const [vehicles, setVehicles] = useState([]);
   const [filter, setFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const itemsPerPage = 4; 
   const navigate = useNavigate();
 
@@ -46,8 +49,139 @@ const Dashboard = () => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
+  const handleImageClick = (vehicle, e) => {
+    e.stopPropagation();
+    setSelectedVehicle(vehicle);
+    setCurrentImageIndex(0);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedVehicle(null);
+    setCurrentImageIndex(0);
+  };
+
+  const getFirstImage = (vehicle) => {
+    if (vehicle.images && vehicle.images.length > 0) {
+      return vehicle.images[0];
+    }
+    return vehicle.image || null;
+  };
+
+  const nextImage = () => {
+    if (selectedVehicle && selectedVehicle.images) {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === selectedVehicle.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedVehicle && selectedVehicle.images) {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === 0 ? selectedVehicle.images.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
   return (
     <div className="container py-4">
+      {/* Image Modal */}
+      {showModal && selectedVehicle && (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {selectedVehicle.registrationNumber} - Images 
+                  {selectedVehicle.images && selectedVehicle.images.length > 1 && 
+                    ` (${currentImageIndex + 1}/${selectedVehicle.images.length})`
+                  }
+                </h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body text-center">
+                {selectedVehicle.images && selectedVehicle.images.length > 1 ? (
+                  <div className="carousel-container position-relative">
+                    <img
+                      src={selectedVehicle.images[currentImageIndex]}
+                      className="img-fluid rounded"
+                      alt={`${selectedVehicle.registrationNumber} - ${currentImageIndex + 1}`}
+                      style={{ 
+                        maxHeight: "500px", 
+                        width: "auto", 
+                        objectFit: "contain" 
+                      }}
+                    />
+                    
+                    {/* Previous Button */}
+                    <button 
+                      className="carousel-control-prev position-absolute top-50 start-0 translate-middle-y btn btn-dark rounded-circle p-2"
+                      onClick={prevImage}
+                      style={{ left: "10px" }}
+                    >
+                      <span className="carousel-control-prev-icon"></span>
+                      <span className="visually-hidden">Previous</span>
+                    </button>
+                    
+                    {/* Next Button */}
+                    <button 
+                      className="carousel-control-next position-absolute top-50 end-0 translate-middle-y btn btn-dark rounded-circle p-2"
+                      onClick={nextImage}
+                      style={{ right: "10px" }}
+                    >
+                      <span className="carousel-control-next-icon"></span>
+                      <span className="visually-hidden">Next</span>
+                    </button>
+                  </div>
+                ) : (
+                  <img
+                    src={getFirstImage(selectedVehicle)}
+                    className="img-fluid rounded"
+                    alt={selectedVehicle.registrationNumber}
+                    style={{ 
+                      maxHeight: "500px", 
+                      width: "auto", 
+                      objectFit: "contain" 
+                    }}
+                  />
+                )}
+                
+                {/* Vehicle Information */}
+                <div className="vehicle-info mt-4 p-3 bg-light rounded">
+                  <h6>Vehicle Information</h6>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <p className="mb-1"><strong>Manufacturer:</strong> {selectedVehicle.manufacturer}</p>
+                      <p className="mb-1"><strong>Model:</strong> {selectedVehicle.model}</p>
+                      <p className="mb-1"><strong>Type:</strong> {selectedVehicle.type}</p>
+                    </div>
+                    <div className="col-md-6">
+                      <p className="mb-1"><strong>Fuel Type:</strong> {selectedVehicle.fuelType}</p>
+                      <p className="mb-1"><strong>Running KM:</strong> {selectedVehicle.runningKM?.toLocaleString()}</p>
+                      <p className="mb-1"><strong>Year:</strong> {selectedVehicle.makeYear}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-primary"
+                  onClick={() => navigate(`/vehicle/${selectedVehicle._id}`)}
+                >
+                  View Full Details
+                </button>
+                <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="m-0">Dashboard - Vehicles</h2>
         <div className="d-flex gap-2">
@@ -83,16 +217,21 @@ const Dashboard = () => {
               onClick={() => navigate(`/vehicle/${v._id}`)}
               style={{ cursor: "pointer" }}
             >
-              {v.image ? (
-                <img
-                  src={
-                    v.image.startsWith("/uploads")
-                      ? `${v.image}`
-                      : v.image
-                  }
-                  className="card-img-top vehicle-img"
-                  alt={v.registrationNumber}
-                />
+              {getFirstImage(v) ? (
+                <div className="position-relative">
+                  <img
+                    src={getFirstImage(v)}
+                    className="card-img-top vehicle-img"
+                    alt={v.registrationNumber}
+                    style={{ height: "200px", objectFit: "cover" }}
+                    onClick={(e) => handleImageClick(v, e)}
+                  />
+                  {(v.images && v.images.length > 1) && (
+                    <span className="position-absolute top-0 end-0 badge bg-primary m-2">
+                      +{v.images.length - 1}
+                    </span>
+                  )}
+                </div>
               ) : (
                 <div className="vehicle-img-placeholder">No Image</div>
               )}
@@ -102,7 +241,7 @@ const Dashboard = () => {
                   {v.manufacturer} — {v.model}
                 </p>
                 <p className="card-text small">
-                  Type: {v.type} | KM: {v.runningKM}
+                  Type: {v.type} | KM: {v.runningKM?.toLocaleString()}
                 </p>
               </div>
             </div>
