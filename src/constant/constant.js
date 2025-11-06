@@ -36,6 +36,15 @@ const constant = {
     `${base}/dropVehicle/model/by-manufacturer/${manufacturerId}`,
   SEED_VEHICLE_TYPES: `${base}/dropVehicle/vehicle-type/seed`,
   GET_VEHICLE_TYPES: `${base}/dropVehicle/vehicle-type`,
+
+  CREATE_SERVICE_TYPE: `${base}/dropService/type`,
+  GET_ALL_SERVICE_TYPES: `${base}/dropService/type/all`,
+
+  CREATE_EMPLOYEE_ROLE: `${base}/dropEmployee/role`,
+  GET_ALL_EMPLOYEE_ROLES: `${base}/dropEmployee/role/all`,
+
+  CREATE_FUEL_TYPE: `${base}/dropFuel/type`,
+  GET_ALL_FUEL_TYPES: `${base}/dropFuel/type/all`,
 };
 
 export default constant;
