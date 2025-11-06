@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../Login/axiosConfig";
 import constant from "../../../constant/constant";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const ManageVehicleData = () => {
   const [vehicleTypes] = useState(["CAR", "BIKE", "TRUCK", "BUS"]);
@@ -13,14 +14,23 @@ const ManageVehicleData = () => {
   const [selectedManufacturer, setSelectedManufacturer] = useState("");
   const [newModel, setNewModel] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
+  };
+
   useEffect(() => {
     const load = async () => {
       try {
+        setLoading(true);
         const mfgRes = await axiosInstance.get(
           constant.GET_MANUFACTURERS_BY_TYPE(selectedType)
         );
         const list = mfgRes.data.manufacturers || [];
-        setManufacturers(list.map((m) => m.name)); 
+        setManufacturers(list.map((m) => m.name));
 
         const modelMap = {};
         for (const m of list) {
@@ -33,6 +43,9 @@ const ManageVehicleData = () => {
         setSelectedManufacturer("");
       } catch (err) {
         console.error(err);
+        showToast("Failed to load manufacturers or models", "danger");
+      } finally {
+        setLoading(false);
       }
     };
     if (selectedType) load();
@@ -42,6 +55,7 @@ const ManageVehicleData = () => {
     const name = (newManufacturer || "").trim().toUpperCase();
     if (!name) return;
     try {
+      setLoading(true);
       await axiosInstance.post(constant.CREATE_MANUFACTURER, {
         name,
         vehicleType: selectedType,
@@ -50,8 +64,11 @@ const ManageVehicleData = () => {
         prev.includes(name) ? prev : [...prev, name]
       );
       setNewManufacturer("");
+      showToast("Manufacturer added successfully!", "success");
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to add manufacturer");
+      showToast(err.response?.data?.error || "Failed to add manufacturer", "danger");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,6 +77,7 @@ const ManageVehicleData = () => {
     if (!selectedManufacturer || !name) return;
 
     try {
+      setLoading(true);
       await axiosInstance.post(constant.CREATE_MODEL, {
         name,
         vehicleType: selectedType,
@@ -74,14 +92,28 @@ const ManageVehicleData = () => {
         ],
       }));
       setNewModel("");
+      showToast("Model added successfully!", "success");
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to add model");
+      showToast(err.response?.data?.error || "Failed to add model", "danger");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-3">
+    <div className="p-3 position-relative">
       <h5>Manage Vehicle Types, Manufacturers & Models</h5>
+
+      {loading && (
+        <div
+          className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+          style={{ background: "rgba(255,255,255,0.7)", zIndex: 9999 }}
+        >
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
 
       <div className="row mt-3">
         <div className="col-md-6 mb-3">
@@ -108,9 +140,7 @@ const ManageVehicleData = () => {
             className="form-control mb-2"
             placeholder="Enter Manufacturer (UPPERCASE)"
             value={newManufacturer}
-            onChange={(e) =>
-              setNewManufacturer(e.target.value.toUpperCase())
-            }
+            onChange={(e) => setNewManufacturer(e.target.value.toUpperCase())}
           />
           <button className="btn btn-primary btn-sm" onClick={addManufacturer}>
             Add Manufacturer
@@ -155,6 +185,22 @@ const ManageVehicleData = () => {
           ))}
         </ul>
       </div>
+
+      {toast.show && (
+        <div
+          className={`toast align-items-center text-bg-${toast.type} border-0 position-fixed bottom-0 end-0 m-3 show`}
+          role="alert"
+        >
+          <div className="d-flex">
+            <div className="toast-body">{toast.message}</div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              onClick={() => setToast({ show: false, message: "", type: "success" })}
+            ></button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
