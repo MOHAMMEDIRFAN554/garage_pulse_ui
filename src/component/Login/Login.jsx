@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "./axiosConfig";
 import { useAuth } from "./authContext";
 import "bootstrap/dist/css/bootstrap.min.css";
-import constant from '../../constant/constant';
-import './Login.css'; 
+import constant from "../../constant/constant";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -27,14 +27,46 @@ function Login() {
         password: user.password,
       });
 
-      login(response.data.user, response.data.token);
-      
+      let userData, authToken, redirectPath;
+
+      if (response.data.token) {
+        userData = response.data.user;
+        authToken = response.data.token;
+        redirectPath = response.data.redirect;
+      } else {
+        userData = {
+          id: response.data.id || response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role,
+        };
+        authToken = response.data.token;
+        redirectPath = response.data.redirect;
+      }
+
+      login(userData, authToken);
+
       setLoading(false);
-      alert(response.data.msg);
-      navigate("/home");
+      alert(response.data.message || response.data.msg || "Login successful");
+
+      if (redirectPath) {
+        navigate(redirectPath);
+      } else if (userData.role && userData.role.toLowerCase() === "admin") {
+        navigate("/AdminDashboard");
+      } else if (userData.role && userData.role.toLowerCase() === "owner") {
+        navigate("/home");
+      } else {
+        navigate("/home");
+      }
+
     } catch (err) {
       setLoading(false);
-      setError(err.response?.data?.msg || err.response?.data?.error || "Login failed");
+      setError(
+        err.response?.data?.msg ||
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Login failed"
+      );
     }
   };
 

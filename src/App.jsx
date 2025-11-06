@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./component/Login/authContext";
+import { AuthProvider, useAuth } from "./component/Login/authContext";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import PublicRoute from "./Routes/PublicRoute";
 import Landing from "./component/landing/Landing";
@@ -18,160 +18,201 @@ import DeleteVehicle from "./component/Dashboard/screen/deleteVehicle";
 import ServiceList from "./component/Service/serviceList";
 import ServiceForm from "./component/Service/serviceForm";
 import AddEmployee from "./component/Employee/Addemployee";
-import AddInsurance from "./component/Insurance/addInsurance"; 
+import AddInsurance from "./component/Insurance/addInsurance";
 
-// import AddEmployee from "./component/Employee/Addemployee";
 import EmployeList from "./component/Employee/EmployeList";
 import DeleteEmployee from "./component/Employee/deleteEmployee";
 
+// admin
+import AdminDashboard from "./component/admin/AdminDashboard";
 
+
+// ✅ Separate inner router so AuthContext is accessible inside ProtectedRoute
+function AppRoutes() {
+  const { user } = useAuth(); // ✅ Fix: get user from context
+
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/landing" replace />} />
+
+      {/* 🌐 Public Routes */}
+      <Route
+        path="/landing"
+        element={
+          <PublicRoute>
+            <Landing />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/registration"
+        element={
+          <PublicRoute>
+            <Registration />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+
+      {/* 🔒 Protected Routes */}
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            {user?.role?.toLowerCase() === "admin" ? (
+              <Navigate to="/AdminDashboard" replace />
+            ) : (
+              <Home />
+            )}
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/AdminDashboard"
+        element={
+          <ProtectedRoute>
+            {user?.role?.toLowerCase() === "admin" ? (
+              <AdminDashboard />
+            ) : (
+              <Navigate to="/home" replace />
+            )}
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/addVehicle"
+        element={
+          <ProtectedRoute>
+            <AddVehicle />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vehicle/:id"
+        element={
+          <ProtectedRoute>
+            <VehicleDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/deleteVehicle"
+        element={
+          <ProtectedRoute>
+            <DeleteVehicle />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/serviceList"
+        element={
+          <ProtectedRoute>
+            <ServiceList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/serviceForm"
+        element={
+          <ProtectedRoute>
+            <ServiceForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/editService/:id"
+        element={
+          <ProtectedRoute>
+            <ServiceForm />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/addEmployee"
+        element={
+          <ProtectedRoute>
+            <AddEmployee />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/EmployeList"
+        element={
+          <ProtectedRoute>
+            <EmployeList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/DeleteEmployee"
+        element={
+          <ProtectedRoute>
+            <DeleteEmployee />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/insurance"
+        element={
+          <ProtectedRoute>
+            <AddInsurance />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            {user?.role?.toLowerCase() === "admin" ? (
+              <Navigate to="/AdminDashboard" replace />
+            ) : (
+              <Navigate to="/home" replace />
+            )}
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 🚫 404 Page */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+// ✅ Wrap AppRoutes inside AuthProvider + Router
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-
-          <Route path="/" element={<Navigate to="/landing" replace />} />
-
-          {/* 🌐 Public Routes */}
-          <Route
-            path="/landing"
-            element={
-              <PublicRoute>
-                <Landing />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/registration"
-            element={
-              <PublicRoute>
-                <Registration />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/forgot-password"
-            element={
-              <PublicRoute>
-                <ForgotPassword />
-              </PublicRoute>
-            }
-          />
-
-          {/* 🔒 Protected Routes */}
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/addVehicle"
-            element={
-              <ProtectedRoute>
-                <AddVehicle />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/vehicle/:id"
-            element={
-              <ProtectedRoute>
-                <VehicleDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/deleteVehicle"
-            element={
-              <ProtectedRoute>
-                <DeleteVehicle />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/serviceList"
-            element={
-              <ProtectedRoute>
-                <ServiceList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/serviceForm"
-            element={
-              <ProtectedRoute>
-                <ServiceForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/editService/:id"
-            element={
-              <ProtectedRoute>
-                <ServiceForm />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/addEmployee"
-            element={
-              <ProtectedRoute>
-                <AddEmployee />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/EmployeList"
-            element={
-              <ProtectedRoute>
-                <EmployeList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/DeleteEmployee"
-            element={
-              <ProtectedRoute>
-                <DeleteEmployee />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/insurance"
-            element={
-              <ProtectedRoute>
-                <AddInsurance />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* 🚫 404 Page */}
-          <Route path="*" element={<NotFound />} />
-
-        </Routes>
+        <AppRoutes />
       </Router>
     </AuthProvider>
   );
