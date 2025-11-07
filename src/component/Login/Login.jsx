@@ -27,45 +27,42 @@ function Login() {
         password: user.password,
       });
 
-      let userData, authToken, redirectPath;
+      // normalized handling (token optional)
+      const payload = response.data || {};
+      const userData = payload.user || {
+        id: payload.id || payload._id,
+        name: payload.name,
+        email: payload.email,
+        role: payload.role,
+      };
+      const authToken = payload.token;
+      const redirectPath = payload.redirect;
 
-      if (response.data.token) {
-        userData = response.data.user;
-        authToken = response.data.token;
-        redirectPath = response.data.redirect;
-      } else {
-        userData = {
-          id: response.data.id || response.data._id,
-          name: response.data.name,
-          email: response.data.email,
-          role: response.data.role,
-        };
-        authToken = response.data.token;
-        redirectPath = response.data.redirect;
-      }
-
-      login(userData, authToken);
+      login(userData, authToken); // your context call
 
       setLoading(false);
-      alert(response.data.message || response.data.msg || "Login successful");
+      alert(payload.message || payload.msg || "Login successful");
+
+      const role = (userData?.role || payload.role || "").toLowerCase();
 
       if (redirectPath) {
         navigate(redirectPath);
-      } else if (userData.role && userData.role.toLowerCase() === "admin") {
+      } else if (role === "admin") {
         navigate("/AdminDashboard");
-      } else if (userData.role && userData.role.toLowerCase() === "owner") {
+      } else if (role === "driver" || role === "co-driver") {
+        navigate("/employeeHome");
+      } else if (role === "owner") {
         navigate("/home");
       } else {
         navigate("/home");
       }
-
     } catch (err) {
       setLoading(false);
       setError(
         err.response?.data?.msg ||
-          err.response?.data?.error ||
-          err.response?.data?.message ||
-          "Login failed"
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Login failed"
       );
     }
   };

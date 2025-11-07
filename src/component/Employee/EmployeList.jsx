@@ -20,9 +20,12 @@ const EmployeeList = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axiosInstance.get(constant.GETALLEMPLOYEE, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await axiosInstance.get(
+        constant.GETALLEMPLOYEEWITHVEHICLE,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       setEmployees(response.data.employees || []);
     } catch (error) {
       console.error("Error fetching employees", error);
@@ -56,10 +59,9 @@ const EmployeeList = () => {
       "co-driver": "Co-Driver",
       mechanic: "Mechanic",
     };
-    return roleDisplayMap[role] || role;
+    return roleDisplayMap[role?.toLowerCase()] || role;
   };
 
-  // 🔹 Fetch full employee details when card clicked
   const handleEmployeeClick = async (empId) => {
     setLoadingDetails(true);
     try {
@@ -76,6 +78,7 @@ const EmployeeList = () => {
 
   return (
     <div className="container py-4">
+      {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="m-0">Dashboard - Employees</h2>
         <div className="d-flex gap-2">
@@ -94,6 +97,7 @@ const EmployeeList = () => {
         </div>
       </div>
 
+      {/* Filter Section */}
       <div className="d-flex align-items-center mb-4 gap-2">
         <label className="me-2 mb-0 fw-semibold">Filter:</label>
         <select
@@ -108,12 +112,13 @@ const EmployeeList = () => {
         </select>
       </div>
 
+      {/* Employee Cards */}
       <div className="row g-3">
         {paginatedEmployees.map((emp) => (
           <div key={emp._id} className="col-sm-6 col-md-4 col-lg-3">
             <div
               className="card employee-card h-100 shadow-sm"
-              onClick={() => handleEmployeeClick(emp._id)} // 🔹 Fetch & show details
+              onClick={() => handleEmployeeClick(emp._id)}
               style={{ cursor: "pointer" }}
             >
               {emp.image ? (
@@ -130,9 +135,20 @@ const EmployeeList = () => {
               <div className="card-body text-center">
                 <h5 className="card-title mb-1">{emp.name}</h5>
                 <p className="card-text small mb-1">{emp.email}</p>
-                <p className="card-text text-muted small">
+                <p className="card-text text-muted small mb-1">
                   Role: {formatRoleForDisplay(emp.role)}
                 </p>
+
+                {/* ✅ Assigned Vehicle Display */}
+                {emp.assignedVehicle ? (
+                  <p className="card-text text-success small mb-0">
+                    <strong>Vehicle:</strong> {emp.assignedVehicle}
+                  </p>
+                ) : (
+                  <p className="card-text text-muted small mb-0">
+                    <em>No Vehicle Assigned</em>
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -145,6 +161,7 @@ const EmployeeList = () => {
         )}
       </div>
 
+      {/* Pagination */}
       {filteredEmployees.length > itemsPerPage && (
         <nav className="mt-4">
           <ul className="pagination justify-content-center">
@@ -160,7 +177,9 @@ const EmployeeList = () => {
             {Array.from({ length: totalPages }, (_, i) => (
               <li
                 key={i}
-                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                className={`page-item ${
+                  currentPage === i + 1 ? "active" : ""
+                }`}
               >
                 <button
                   className="page-link"
@@ -187,18 +206,26 @@ const EmployeeList = () => {
         </nav>
       )}
 
-      {/* 🔹 Employee Detail Popup */}
+      {/* Employee Details Modal */}
       {selectedEmployee && (
         <div
           className="employee-modal-overlay"
           onClick={() => setSelectedEmployee(null)}
         >
           <div className="employee-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="text-end">
+            <div className="d-flex justify-content-between align-items-start">
               <button
                 className="btn-close"
                 onClick={() => setSelectedEmployee(null)}
               ></button>
+              <button
+                className="btn btn-outline-primary btn-sm"
+                onClick={() =>
+                  navigate(`/editEmployee/${selectedEmployee._id}`)
+                }
+              >
+                <i className="bi bi-pencil-square"></i>
+              </button>
             </div>
 
             {loadingDetails ? (

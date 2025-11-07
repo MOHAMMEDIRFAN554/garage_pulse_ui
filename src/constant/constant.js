@@ -13,6 +13,10 @@ const constant = {
   UPDATEVEHICLE: (id) => `${base}/vehicle/${id}`,
   DELETEVEHICLE: (id) => `${base}/vehicle/${id}`,
 
+  ASSIGN: `${base}/assignVehicle/assign`,
+  ASSIGNMENT:(id) => `${base}/assignVehicle/assignment/${id}`,
+  AVAILABLE:`${base}/assignVehicle/available`,
+
   CREATESERVICE: `${base}/service/createService`,
   GETALLSERVICE: `${base}/service/getAllService`,
   GETSERVICEBYID: (id) => `${base}/service/getServiceById/${id}`,
@@ -25,6 +29,10 @@ const constant = {
   GETALLEMPLOYEE: `${base}/employee/getAllEmployee`,
   GETEMPLOYEEBYID: (id) => `${base}/employee/getEmployee/${id}`,
   DELETEEMPLOYEE: (id) => `${base}/employee/${id}`,
+  UPDATEEMPLOYEE: (id) => `${base}/employee/update/${id}`,
+  GETALLEMPLOYEEWITHVEHICLE: `${base}/employee/getAllEmployeeWithVehicle`,
+
+
 
   ADDINSURANCE: `${base}/insurance/add`,
 
@@ -45,6 +53,25 @@ const constant = {
 
   CREATE_FUEL_TYPE: `${base}/dropFuel/type`,
   GET_ALL_FUEL_TYPES: `${base}/dropFuel/type/all`,
+
+    GET_ASSIGNED_VEHICLE: `${base}/employee/assignedVehicle`,
+  UPDATE_RUNNING_KM: `${base}/employee/updateRunningKM`,
+  CREATE_COLLECTION: `${base}/collection/add`,
+  CREATE_SERVICE_REQUEST: `${base}/service/request`,
+  GET_SERVICE_REQUESTS_OWNER: `${base}/service/requests/owner`,
+ // **** EMPLOYEE (driver/co-driver) ****
+  EMPLOYEE_ASSIGNED_VEHICLE: `${base}/employee/me/assigned-vehicle`,
+  EMPLOYEE_UPDATE_RUNNING_KM: (vehicleId) => `${base}/employee/vehicle/${vehicleId}/update-km`,
+  EMPLOYEE_CHANGE_PASSWORD: `${base}/employee/change-password`,
+
+  // **** COLLECTIONS ****
+  COLLECTION_CREATE: `${base}/collection/create`,
+  COLLECTION_LIST: `${base}/collection/list`, 
+
+  // **** SERVICE REQUESTS ****
+  SERVICE_REQUEST_CREATE: `${base}/service-request/create`,
+  SERVICE_REQUEST_LIST_OWNER: `${base}/service-request/list`,
+  SERVICE_REQUEST_UPDATE_STATUS: (id) => `${base}/service-request/${id}/status`,
 };
 
 export default constant;

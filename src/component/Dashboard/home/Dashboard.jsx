@@ -12,7 +12,7 @@ const Dashboard = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const itemsPerPage = 4; 
+  const itemsPerPage = 4;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +21,9 @@ const Dashboard = () => {
 
   const fetchVehicles = async () => {
     try {
-      const response = await axiosInstance.get(constant.GETALLVEHICLE);
+      const response = await axiosInstance.get(constant.GETALLVEHICLE, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       setVehicles(response.data.vehicles || []);
     } catch (error) {
       console.error("Error fetching vehicles", error);
@@ -71,7 +73,7 @@ const Dashboard = () => {
 
   const nextImage = () => {
     if (selectedVehicle && selectedVehicle.images) {
-      setCurrentImageIndex((prevIndex) => 
+      setCurrentImageIndex((prevIndex) =>
         prevIndex === selectedVehicle.images.length - 1 ? 0 : prevIndex + 1
       );
     }
@@ -79,8 +81,10 @@ const Dashboard = () => {
 
   const prevImage = () => {
     if (selectedVehicle && selectedVehicle.images) {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === 0 ? selectedVehicle.images.length - 1 : prevIndex - 1
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === 0
+          ? selectedVehicle.images.length - 1
+          : prevIndex - 1
       );
     }
   };
@@ -89,34 +93,46 @@ const Dashboard = () => {
     <div className="container py-4">
       {/* Image Modal */}
       {showModal && selectedVehicle && (
-        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+        <div
+          className="modal fade show"
+          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+          tabIndex="-1"
+        >
           <div className="modal-dialog modal-lg modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
-                  {selectedVehicle.registrationNumber} - Images 
-                  {selectedVehicle.images && selectedVehicle.images.length > 1 && 
-                    ` (${currentImageIndex + 1}/${selectedVehicle.images.length})`
-                  }
+                  {selectedVehicle.registrationNumber} - Images
+                  {selectedVehicle.images &&
+                    selectedVehicle.images.length > 1 &&
+                    ` (${currentImageIndex + 1}/${
+                      selectedVehicle.images.length
+                    })`}
                 </h5>
-                <button type="button" className="btn-close" onClick={closeModal}></button>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                ></button>
               </div>
               <div className="modal-body text-center">
-                {selectedVehicle.images && selectedVehicle.images.length > 1 ? (
+                {selectedVehicle.images &&
+                selectedVehicle.images.length > 1 ? (
                   <div className="carousel-container position-relative">
                     <img
                       src={selectedVehicle.images[currentImageIndex]}
                       className="img-fluid rounded"
-                      alt={`${selectedVehicle.registrationNumber} - ${currentImageIndex + 1}`}
-                      style={{ 
-                        maxHeight: "500px", 
-                        width: "auto", 
-                        objectFit: "contain" 
+                      alt={`${selectedVehicle.registrationNumber} - ${
+                        currentImageIndex + 1
+                      }`}
+                      style={{
+                        maxHeight: "500px",
+                        width: "auto",
+                        objectFit: "contain",
                       }}
                     />
-                    
-                    {/* Previous Button */}
-                    <button 
+
+                    <button
                       className="carousel-control-prev position-absolute top-50 start-0 translate-middle-y btn btn-dark rounded-circle p-2"
                       onClick={prevImage}
                       style={{ left: "10px" }}
@@ -124,9 +140,8 @@ const Dashboard = () => {
                       <span className="carousel-control-prev-icon"></span>
                       <span className="visually-hidden">Previous</span>
                     </button>
-                    
-                    {/* Next Button */}
-                    <button 
+
+                    <button
                       className="carousel-control-next position-absolute top-50 end-0 translate-middle-y btn btn-dark rounded-circle p-2"
                       onClick={nextImage}
                       style={{ right: "10px" }}
@@ -140,40 +155,57 @@ const Dashboard = () => {
                     src={getFirstImage(selectedVehicle)}
                     className="img-fluid rounded"
                     alt={selectedVehicle.registrationNumber}
-                    style={{ 
-                      maxHeight: "500px", 
-                      width: "auto", 
-                      objectFit: "contain" 
+                    style={{
+                      maxHeight: "500px",
+                      width: "auto",
+                      objectFit: "contain",
                     }}
                   />
                 )}
-                
-                {/* Vehicle Information */}
+
                 <div className="vehicle-info mt-4 p-3 bg-light rounded">
                   <h6>Vehicle Information</h6>
                   <div className="row">
                     <div className="col-md-6">
-                      <p className="mb-1"><strong>Manufacturer:</strong> {selectedVehicle.manufacturer}</p>
-                      <p className="mb-1"><strong>Model:</strong> {selectedVehicle.model}</p>
-                      <p className="mb-1"><strong>Type:</strong> {selectedVehicle.type}</p>
+                      <p className="mb-1">
+                        <strong>Manufacturer:</strong>{" "}
+                        {selectedVehicle.manufacturer}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Model:</strong> {selectedVehicle.model}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Type:</strong> {selectedVehicle.type}
+                      </p>
                     </div>
                     <div className="col-md-6">
-                      <p className="mb-1"><strong>Fuel Type:</strong> {selectedVehicle.fuelType}</p>
-                      <p className="mb-1"><strong>Running KM:</strong> {selectedVehicle.runningKM?.toLocaleString()}</p>
-                      <p className="mb-1"><strong>Year:</strong> {selectedVehicle.makeYear}</p>
+                      <p className="mb-1">
+                        <strong>Fuel Type:</strong> {selectedVehicle.fuelType}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Running KM:</strong>{" "}
+                        {selectedVehicle.runningKM?.toLocaleString()}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Year:</strong> {selectedVehicle.makeYear}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={() => navigate(`/vehicle/${selectedVehicle._id}`)}
                 >
                   View Full Details
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeModal}
+                >
                   Close
                 </button>
               </div>
@@ -185,10 +217,16 @@ const Dashboard = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="m-0">Dashboard - Vehicles</h2>
         <div className="d-flex gap-2">
-          <button className="btn btn-outline-secondary" onClick={() => navigate("/home")}>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/home")}
+          >
             Back to Home
           </button>
-          <button className="btn btn-primary" onClick={() => navigate("/addVehicle")}>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/addVehicle")}
+          >
             Add Vehicle
           </button>
         </div>
@@ -226,7 +264,7 @@ const Dashboard = () => {
                     style={{ height: "200px", objectFit: "cover" }}
                     onClick={(e) => handleImageClick(v, e)}
                   />
-                  {(v.images && v.images.length > 1) && (
+                  {v.images && v.images.length > 1 && (
                     <span className="position-absolute top-0 end-0 badge bg-primary m-2">
                       +{v.images.length - 1}
                     </span>
@@ -240,9 +278,21 @@ const Dashboard = () => {
                 <p className="card-text mb-1">
                   {v.manufacturer} — {v.model}
                 </p>
-                <p className="card-text small">
+                <p className="card-text small mb-1">
                   Type: {v.type} | KM: {v.runningKM?.toLocaleString()}
                 </p>
+
+                {/* ✅ Assigned Employees */}
+                {v.assignedDriver && (
+                  <p className="card-text text-success small mb-0">
+                    <strong>Driver:</strong> {v.assignedDriver.name}
+                  </p>
+                )}
+                {v.assignedCoDriver && (
+                  <p className="card-text text-primary small mb-0">
+                    <strong>Co-Driver:</strong> {v.assignedCoDriver.name}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -270,7 +320,9 @@ const Dashboard = () => {
             {Array.from({ length: totalPages }, (_, i) => (
               <li
                 key={i}
-                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+                className={`page-item ${
+                  currentPage === i + 1 ? "active" : ""
+                }`}
               >
                 <button
                   className="page-link"

@@ -9,7 +9,13 @@ const ServiceList = () => {
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const navigate = useNavigate();
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
+  };
 
   useEffect(() => {
     fetchServices();
@@ -21,17 +27,19 @@ const ServiceList = () => {
       setServices(res.data.services || []);
     } catch (err) {
       console.error("Error fetching services:", err);
+      showToast("Failed to fetch services.", "danger");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this service?")) return;
     try {
       await axiosInstance.delete(constant.DELETESERVICE(id));
+      showToast("Service deleted successfully.", "success");
       fetchServices();
       setShowModal(false);
     } catch (err) {
       console.error("Error deleting service:", err);
+      showToast("Failed to delete service.", "danger");
     }
   };
 
@@ -45,7 +53,7 @@ const ServiceList = () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 position-relative">
       <div className="service-card">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="card-title m-0">Service Management</h2>
@@ -91,9 +99,7 @@ const ServiceList = () => {
                           ? `${service.manufacturer} ${service.model}`
                           : "N/A"}
                       </td>
-                      <td className="text-uppercase">
-                        {service.vehicleNumber || "N/A"}
-                      </td>
+                      <td className="text-uppercase">{service.vehicleNumber || "N/A"}</td>
                       <td
                         className="fw-semibold text-primary text-capitalize pointer"
                         onClick={() => handleView(service)}
@@ -203,6 +209,22 @@ const ServiceList = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {toast.show && (
+        <div
+          className={`toast align-items-center text-bg-${toast.type} border-0 position-fixed bottom-0 end-0 m-3 show`}
+          role="alert"
+        >
+          <div className="d-flex">
+            <div className="toast-body">{toast.message}</div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              onClick={() => setToast({ show: false, message: "", type: "success" })}
+            ></button>
           </div>
         </div>
       )}
