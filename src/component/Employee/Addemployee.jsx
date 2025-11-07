@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "../Login/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Toast } from "bootstrap";
 import "./AddEmployee.css";
 import constant from "../../constant/constant";
 
@@ -18,18 +19,63 @@ const AddEmployee = () => {
     licenseNumber: "",
     role: "",
     experience: "",
+    salary: "", 
   });
 
+  const [roles, setRoles] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", msg: "" });
 
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const res = await axiosInstance.get(constant.GET_ALL_EMPLOYEE_ROLES, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        let fetchedRoles = [];
+        if (Array.isArray(res.data.roles)) {
+          fetchedRoles = res.data.roles;
+        } else if (Array.isArray(res.data.data)) {
+          fetchedRoles = res.data.data;
+        } else if (Array.isArray(res.data)) {
+          fetchedRoles = res.data;
+        }
+
+        if (fetchedRoles.length > 0) {
+          setRoles(fetchedRoles);
+        } else {
+          showToast("danger", "No roles found from server");
+        }
+      } catch (err) {
+        console.error("Failed to fetch roles:", err);
+        showToast("danger", "Failed to fetch employee roles");
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  const showToast = (type, msg) => {
+    setToast({ show: true, type, msg });
+
+    const toastEl = document.getElementById("liveToast");
+    if (toastEl) {
+      const bsToast = new Toast(toastEl, { delay: 3000 });
+      bsToast.show();
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const updatedValue = name === "name" ? value.toUpperCase() : value;
     setEmployee((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: updatedValue,
     }));
   };
 
@@ -50,7 +96,7 @@ const AddEmployee = () => {
     const required = ["name", "email", "password", "phone", "role"];
     for (let k of required) {
       if (!employee[k]) {
-        setToast({ show: true, type: "danger", msg: `Please fill ${k}` });
+        showToast("danger", `Please fill ${k}`);
         return;
       }
     }
@@ -79,22 +125,15 @@ const AddEmployee = () => {
         },
       });
 
-      setToast({
-        show: true,
-        type: "success",
-        msg: "Employee added successfully",
-      });
-
+      showToast("success", "Employee added successfully");
       setTimeout(() => navigate("/EmployeList"), 1500);
     } catch (err) {
-      setToast({
-        show: true,
-        type: "danger",
-        msg:
-          err.response?.data?.error ||
+      showToast(
+        "danger",
+        err.response?.data?.error ||
           err.response?.data?.message ||
-          "Failed to add employee",
-      });
+          "Failed to add employee"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -104,18 +143,32 @@ const AddEmployee = () => {
 
   return (
     <div className="container py-4">
+      <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 11 }}>
+        <div
+          id="liveToast"
+          className={`toast align-items-center text-bg-${toast.type} border-0 ${
+            toast.show ? "show" : "hide"
+          }`}
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div className="d-flex">
+            <div className="toast-body">{toast.msg}</div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+              onClick={() => setToast({ ...toast, show: false })}
+            ></button>
+          </div>
+        </div>
+      </div>
+
       <div className="card mx-auto add-employee-card">
         <div className="card-body">
           <h4 className="card-title mb-3">Add Employee</h4>
-
-          {toast.show && (
-            <div
-              className={`alert alert-${toast.type} custom-toast`}
-              role="alert"
-            >
-              {toast.msg}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
@@ -187,6 +240,24 @@ const AddEmployee = () => {
               </div>
 
               <div className="col-md-6">
+                <label className="form-label">Salary (₹)</label>
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <i className="bi bi-cash-coin"></i>
+                  </span>
+                  <input
+                    name="salary"
+                    type="number"
+                    value={employee.salary}
+                    className="form-control"
+                    onChange={handleChange}
+                    min="0"
+                    placeholder="Enter salary"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6">
                 <label className="form-label">Role *</label>
                 <div className="input-group">
                   <span className="input-group-text">
@@ -200,9 +271,15 @@ const AddEmployee = () => {
                     required
                   >
                     <option value="">Select Role</option>
-                    <option value="driver">Driver</option>
-                    <option value="co-driver">Co-Driver</option>
-                    <option value="mechanic">Mechanic</option>
+                    {roles.length > 0 ? (
+                      roles.map((role, index) => (
+                        <option key={`${role}-${index}`} value={role}>
+                          {role}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading roles...</option>
+                    )}
                   </select>
                 </div>
               </div>

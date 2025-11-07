@@ -28,6 +28,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      {/* Header */}
       <header className="home-header">
         <div className="user-name">Welcome, {userData?.name || "User"}</div>
         <button className="logout-btn" onClick={handleLogout}>
@@ -35,6 +36,7 @@ const Home = () => {
         </button>
       </header>
 
+      {/* Card */}
       <div className="home-card">
         <h1>Welcome to Garage Pulse!</h1>
         <p>
@@ -47,7 +49,9 @@ const Home = () => {
           <strong>User ID:</strong> {userData?.id || "N/A"}
         </p>
 
+        {/* Buttons */}
         <div className="button-container">
+          {/* VEHICLE SECTION */}
           <button className="home-btn" onClick={() => navigate("/dashboard")}>
             <span className="icon">🚗</span> Vehicle Dashboard
           </button>
@@ -60,6 +64,7 @@ const Home = () => {
             <span className="icon">➕</span> Add Vehicle
           </button>
 
+          {/* EMPLOYEE SECTION */}
           <button className="home-btn" onClick={() => navigate("/EmployeList")}>
             <span className="icon">👥</span> Employee List
           </button>
@@ -72,6 +77,7 @@ const Home = () => {
             <span className="icon">➕</span> Add Employee
           </button>
 
+          {/* SERVICE SECTION */}
           <button className="home-btn" onClick={() => navigate("/ServiceList")}>
             <span className="icon">🧾</span> Service List
           </button>
@@ -83,6 +89,8 @@ const Home = () => {
           >
             <span className="icon">➕</span> Add Service
           </button>
+
+          {/* INSURANCE + ASSIGNMENT */}
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#28a745" }}
@@ -91,6 +99,32 @@ const Home = () => {
             <span className="icon">➕</span> Add Insurance
           </button>
 
+          <button
+            className="home-btn add-btn"
+            style={{ backgroundColor: "#28a745" }}
+            onClick={() => navigate("/assignVehicle")}
+          >
+            <span className="icon">➕</span> Assign Vehicle
+          </button>
+
+          {/* OWNER COLLECTION & SERVICE REQUESTS */}
+          <button
+            className="home-btn"
+            style={{ backgroundColor: "#007bff" }}
+            onClick={() => navigate("/owner/collections")}
+          >
+            <span className="icon">💰</span> Collection Report
+          </button>
+
+          <button
+            className="home-btn"
+            style={{ backgroundColor: "#17a2b8" }}
+            onClick={() => navigate("/owner/service-requests")}
+          >
+            <span className="icon">🛠️</span> Service Requests
+          </button>
+
+          {/* DELETE ACTIONS */}
           <button
             className="home-btn add-btn"
             style={{ backgroundColor: "#a72828ff" }}
@@ -106,7 +140,6 @@ const Home = () => {
           >
             <span className="icon">🗑️</span> Delete Employee
           </button>
-
         </div>
       </div>
     </div>

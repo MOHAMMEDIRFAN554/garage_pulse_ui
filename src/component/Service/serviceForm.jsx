@@ -18,24 +18,49 @@ const ServiceForm = () => {
   });
 
   const [vehicleDetails, setVehicleDetails] = useState(null);
+  const [serviceTypes, setServiceTypes] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
+  };
 
   useEffect(() => {
+    fetchServiceTypes();
+    fetchUserVehicles();
     if (isEdit) fetchServiceData(id);
   }, [id]);
+
+  const fetchServiceTypes = async () => {
+    try {
+      const res = await axiosInstance.get(constant.GET_ALL_SERVICE_TYPES);
+      setServiceTypes(res.data.serviceTypes || []);
+    } catch (err) {
+      console.error("Error fetching service types:", err);
+      showToast("Failed to load service types", "danger");
+    }
+  };
+
+  const fetchUserVehicles = async () => {
+    try {
+      const res = await axiosInstance.get(constant.GETALLVEHICLE);
+      setVehicles(res.data.vehicles || []);
+    } catch (err) {
+      console.error("Error fetching vehicles:", err);
+      showToast("Failed to load vehicles", "danger");
+    }
+  };
 
   const fetchServiceData = async (serviceId) => {
     try {
       const res = await axiosInstance.get(constant.GETSERVICEBYID(serviceId));
-
-      const data =
-        res?.data?.service ||
-        res?.data?.data ||
-        res?.data ||
-        {};
+      const data = res?.data?.service || {};
 
       if (!data || Object.keys(data).length === 0) {
-        alert("No service details found for this ID.");
+        showToast("No service details found for this ID.", "warning");
         return;
       }
 
@@ -45,39 +70,41 @@ const ServiceForm = () => {
         remarks: data.remarks || "",
         cost: data.cost || "",
       });
+
+      // Set vehicle details for edit mode
+      if (data.vehicleNumber) {
+        const vehicle = vehicles.find(v => v.registrationNumber === data.vehicleNumber);
+        if (vehicle) {
+          setVehicleDetails({
+            registrationNumber: vehicle.registrationNumber,
+            manufacturer: vehicle.manufacturer,
+            model: vehicle.model,
+            ownerName: vehicle.ownerName || "N/A"
+          });
+        }
+      }
     } catch (err) {
       console.error("Error fetching service:", err);
-      alert("Failed to load service details. Please try again.");
+      showToast("Failed to load service details.", "danger");
     }
   };
 
-  const handleFetchVehicle = async () => {
-    if (!formData.vehicleNumber.trim()) {
-      alert("Please enter a vehicle number.");
-      return;
-    }
+  const handleVehicleChange = (e) => {
+    const selectedVehicleNumber = e.target.value;
+    setFormData({ ...formData, vehicleNumber: selectedVehicleNumber });
 
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(
-        `${constant.GETSERVICEVEHICLEBYNUMBER}/${formData.vehicleNumber}`
-      );
-
-      const vehicleData =
-        res?.data?.vehicle || res?.data?.data || res?.data || null;
-
-      if (vehicleData) {
-        setVehicleDetails(vehicleData);
-      } else {
-        setVehicleDetails(null);
-        alert("Vehicle not found!");
+    if (selectedVehicleNumber) {
+      const selectedVehicle = vehicles.find(v => v.registrationNumber === selectedVehicleNumber);
+      if (selectedVehicle) {
+        setVehicleDetails({
+          registrationNumber: selectedVehicle.registrationNumber,
+          manufacturer: selectedVehicle.manufacturer,
+          model: selectedVehicle.model,
+          ownerName: selectedVehicle.ownerName || "N/A"
+        });
       }
-    } catch (err) {
-      console.error("Error fetching vehicle:", err);
+    } else {
       setVehicleDetails(null);
-      alert("Vehicle not found or server error.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -88,23 +115,28 @@ const ServiceForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.vehicleNumber) {
+      showToast("Please select a vehicle", "warning");
+      return;
+    }
+
     try {
       if (isEdit) {
         await axiosInstance.put(constant.UPDATESERVICE(id), formData);
-        alert("Service updated successfully!");
+        showToast("Service updated successfully!", "success");
       } else {
         await axiosInstance.post(constant.CREATESERVICE, formData);
-        alert("Service added successfully!");
+        showToast("Service added successfully!", "success");
       }
-      navigate("/ServiceList");
+      setTimeout(() => navigate("/ServiceList"), 1200);
     } catch (err) {
       console.error("Error saving service:", err);
-      alert("Failed to save service details. Please try again.");
+      showToast("Failed to save service details.", "danger");
     }
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 position-relative">
       <div className="service-card mx-auto">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="card-title m-0">
@@ -120,36 +152,32 @@ const ServiceForm = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label fw-semibold">Vehicle Number</label>
-            <div className="d-flex gap-2">
-              <input
-                type="text"
-                name="vehicleNumber"
-                value={formData.vehicleNumber}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Enter Vehicle Registration Number"
-                required
-                disabled={isEdit}
-              />
-              {!isEdit && (
-                <button
-                  type="button"
-                  className="btn btn-outline-primary"
-                  onClick={handleFetchVehicle}
-                  disabled={loading}
-                >
-                  {loading ? "Fetching..." : "Fetch"}
-                </button>
-              )}
+            <label className="form-label fw-semibold">Select Vehicle</label>
+            <select
+              className="form-select"
+              name="vehicleNumber"
+              value={formData.vehicleNumber}
+              onChange={handleVehicleChange}
+              required
+              disabled={isEdit}
+            >
+              <option value="">-- Select Vehicle --</option>
+              {vehicles.map((vehicle) => (
+                <option key={vehicle._id} value={vehicle.registrationNumber}>
+                  {vehicle.manufacturer} {vehicle.model} - {vehicle.registrationNumber}
+                </option>
+              ))}
+            </select>
+            <div className="form-text">
+              Choose from your registered vehicles
             </div>
           </div>
 
           {vehicleDetails && (
             <div className="alert alert-info p-2">
-              <strong>Vehicle:</strong> {vehicleDetails.manufacturer} {vehicleDetails.model} |{" "}
-              <strong>Owner:</strong> {vehicleDetails.ownerName || "N/A"}
-
+              <strong>Selected Vehicle:</strong> {vehicleDetails.manufacturer} {vehicleDetails.model} |{" "}
+              <strong>Registration:</strong> {vehicleDetails.registrationNumber} |{" "}
+              <strong>Owner:</strong> {vehicleDetails.ownerName}
             </div>
           )}
 
@@ -163,11 +191,11 @@ const ServiceForm = () => {
               required
             >
               <option value="">-- Select Service Type --</option>
-              <option value="Periodic Service">Periodic Service</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Breakdown Service">Breakdown Service</option>
-              <option value="Repair">Repair</option>
-              <option value="Inspection">Inspection</option>
+              {serviceTypes.map((type, index) => (
+                <option key={index} value={type}>
+                  {type}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -202,6 +230,22 @@ const ServiceForm = () => {
           </button>
         </form>
       </div>
+
+      {toast.show && (
+        <div
+          className={`toast align-items-center text-bg-${toast.type} border-0 position-fixed bottom-0 end-0 m-3 show`}
+          role="alert"
+        >
+          <div className="d-flex">
+            <div className="toast-body">{toast.message}</div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              onClick={() => setToast({ show: false, message: "", type: "success" })}
+            ></button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
