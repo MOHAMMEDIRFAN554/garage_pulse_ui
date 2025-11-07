@@ -27,7 +27,6 @@ function Login() {
         password: user.password,
       });
 
-      // normalized handling (token optional)
       const payload = response.data || {};
       const userData = payload.user || {
         id: payload.id || payload._id,
@@ -38,12 +37,24 @@ function Login() {
       const authToken = payload.token;
       const redirectPath = payload.redirect;
 
-      login(userData, authToken); // your context call
-
+      login(userData, authToken);
       setLoading(false);
       alert(payload.message || payload.msg || "Login successful");
 
-      const role = (userData?.role || payload.role || "").toLowerCase();
+      setTimeout(() => {
+        const role = (userData?.role || payload.role || "").toLowerCase();
+
+        if (redirectPath) {
+          navigate(redirectPath);
+        } else if (role === "admin") {
+          navigate("/AdminDashboard");
+        } else if (role === "driver" || role === "co-driver") {
+          navigate("/employeeHome");
+        } else {
+          navigate("/home");
+        }
+      }, 300);
+
 
       if (redirectPath) {
         navigate(redirectPath);

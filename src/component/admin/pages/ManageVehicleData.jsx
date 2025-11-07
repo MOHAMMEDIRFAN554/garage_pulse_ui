@@ -27,7 +27,12 @@ const ManageVehicleData = () => {
       try {
         setLoading(true);
         const mfgRes = await axiosInstance.get(
-          constant.GET_MANUFACTURERS_BY_TYPE(selectedType)
+          constant.GET_MANUFACTURERS_BY_TYPE(selectedType),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
         const list = mfgRes.data.manufacturers || [];
         setManufacturers(list.map((m) => m.name));
@@ -35,15 +40,24 @@ const ManageVehicleData = () => {
         const modelMap = {};
         for (const m of list) {
           const mdlRes = await axiosInstance.get(
-            constant.GET_MODELS_BY_MANUFACTURER(m._id)
+            constant.GET_MODELS_BY_MANUFACTURER(m._id),
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
           );
           modelMap[m.name] = (mdlRes.data.models || []).map((x) => x.name);
         }
         setModels(modelMap);
         setSelectedManufacturer("");
       } catch (err) {
-        console.error(err);
-        showToast("Failed to load manufacturers or models", "danger");
+        console.error("Error loading data:", err);
+        if (err.response?.status === 401) {
+          showToast("Authentication failed. Please login again.", "danger");
+        } else {
+          showToast("Failed to load manufacturers or models", "danger");
+        }
       } finally {
         setLoading(false);
       }
@@ -56,9 +70,14 @@ const ManageVehicleData = () => {
     if (!name) return;
     try {
       setLoading(true);
-      await axiosInstance.post(constant.CREATE_MANUFACTURER, {
+      const payload = {
         name,
         vehicleType: selectedType,
+      };
+      await axiosInstance.post(constant.CREATE_MANUFACTURER, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setManufacturers((prev) =>
         prev.includes(name) ? prev : [...prev, name]
@@ -66,7 +85,12 @@ const ManageVehicleData = () => {
       setNewManufacturer("");
       showToast("Manufacturer added successfully!", "success");
     } catch (err) {
-      showToast(err.response?.data?.error || "Failed to add manufacturer", "danger");
+      console.error("Error adding manufacturer:", err);
+      if (err.response?.status === 401) {
+        showToast("Authentication failed. Please login again.", "danger");
+      } else {
+        showToast(err.response?.data?.error || "Failed to add manufacturer", "danger");
+      }
     } finally {
       setLoading(false);
     }
@@ -78,10 +102,15 @@ const ManageVehicleData = () => {
 
     try {
       setLoading(true);
-      await axiosInstance.post(constant.CREATE_MODEL, {
+      const payload = {
         name,
         vehicleType: selectedType,
         manufacturer: selectedManufacturer,
+      };
+      await axiosInstance.post(constant.CREATE_MODEL, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       setModels((prev) => ({
@@ -94,7 +123,12 @@ const ManageVehicleData = () => {
       setNewModel("");
       showToast("Model added successfully!", "success");
     } catch (err) {
-      showToast(err.response?.data?.error || "Failed to add model", "danger");
+      console.error("Error adding model:", err);
+      if (err.response?.status === 401) {
+        showToast("Authentication failed. Please login again.", "danger");
+      } else {
+        showToast(err.response?.data?.error || "Failed to add model", "danger");
+      }
     } finally {
       setLoading(false);
     }
