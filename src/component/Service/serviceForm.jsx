@@ -124,6 +124,26 @@ const ServiceForm = () => {
       } else {
         await axiosInstance.post(constant.CREATESERVICE, formData);
         showToast("Service request submitted successfully!", "success");
+
+        // ✅ Also send a service request to the Service Manager
+        try {
+          const selectedVehicle = vehicles.find(v => v.registrationNumber === formData.vehicleNumber);
+          if (selectedVehicle) {
+            await axiosInstance.post(constant.SERVICE_REQUEST_CREATE, {
+              vehicleId: selectedVehicle._id,
+              serviceType: formData.serviceType,
+              narration: formData.remarks,
+            });
+            console.log("Service request sent to manager successfully.");
+          }
+        } catch (reqErr) {
+          console.error("Failed to send service request to manager:", reqErr);
+        }
+
+        // ✅ Trigger live update event for dashboards
+        window.dispatchEvent(new CustomEvent("serviceUpdate", {
+          detail: { type: "newService", vehicleNumber: formData.vehicleNumber, serviceType: formData.serviceType }
+        }));
       }
       setTimeout(() => navigate("/ServiceList"), 1200);
     } catch (err) {

@@ -18,6 +18,12 @@ const ServiceHome = () => {
   const [active, setActive] = useState(null);
   const [working, setWorking] = useState(false);
   const [showPassModal, setShowPassModal] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [completeData, setCompleteData] = useState({
+    serviceId: null,
+    nextServiceKM: "",
+    nextServiceDate: ""
+  });
 
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
   const showToast = (message, type = "success") => {
@@ -29,7 +35,7 @@ const ServiceHome = () => {
     try {
       const [r, m] = await Promise.all([
         axiosInstance.get(constant.SERVICE_MANAGER_REQUESTS),
-        axiosInstance.get(constant.SERVICE_MANAGER_MECHANICS), 
+        axiosInstance.get(constant.SERVICE_MANAGER_MECHANICS),
       ]);
       setRows(r.data.requests || []);
       setMechanics(m.data.mechanics || []);
@@ -43,25 +49,11 @@ const ServiceHome = () => {
     load();
   }, []);
 
-  const filtered = useMemo(
-    () => rows.filter((x) => (x.managerStatus || "REQUESTED") === tab),
-    [rows, tab]
-  );
-
-  const setStatus = async (id, managerStatus) => {
-    try {
-      setWorking(true);
-      await axiosInstance.patch(constant.SERVICE_MANAGER_UPDATE_STATUS(id), {
-        managerStatus,
-      });
-      await load();
-      showToast(`Status updated to ${managerStatus}`, "success");
-    } catch (e) {
-      showToast(e.response?.data?.error || "Failed to update status", "danger");
-    } finally {
-      setWorking(false);
-    }
-  };
+  const filtered = useMemo(() => {
+    const validStages = ["REQUESTED", "ACCEPTED", "IN PROGRESS", "COMPLETED"];
+    const validServices = rows.filter((x) => validStages.includes(x.managerStatus));
+    return validServices.filter((x) => (x.managerStatus || "REQUESTED") === tab);
+  }, [rows, tab]);
 
   const assignMechanic = async (serviceId, mechanicId) => {
     try {
@@ -124,10 +116,15 @@ const ServiceHome = () => {
   const saveExpenses = async () => {
     try {
       setWorking(true);
-      await axiosInstance.patch(constant.SERVICE_MANAGER_EXPENSE(active._id), {
+      await axiosInstance.patch(`${constant.SERVICE_MANAGER_EXPENSE}/${active._id}`, {
         expenses: active.expenses,
       });
       await load();
+
+      window.dispatchEvent(new CustomEvent("serviceUpdate", {
+        detail: { type: "expenses", id: active._id }
+      }));
+
       showToast("Expenses saved", "success");
     } catch (e) {
       showToast(e.response?.data?.error || "Failed to save expenses", "danger");
@@ -136,27 +133,65 @@ const ServiceHome = () => {
     }
   };
 
-  const complete = async (svc) => {
-    const nextServiceKM = prompt("Enter next service KM:");
-    const nextServiceDate = prompt("Enter next service date (YYYY-MM-DD):");
+  const setStatus = async (id, managerStatus) => {
+    try {
+      setWorking(true);
+      await axiosInstance.patch(constant.SERVICE_MANAGER_UPDATE_STATUS(id), {
+        managerStatus,
+      });
+      await load();
+
+      window.dispatchEvent(new CustomEvent("serviceUpdate", {
+        detail: { type: "status", id, status: managerStatus }
+      }));
+
+      showToast(`Status updated to ${managerStatus}`, "success");
+    } catch (e) {
+      showToast(e.response?.data?.error || "Failed to update status", "danger");
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const openCompleteModal = (svc) => {
+    setCompleteData({
+      serviceId: svc._id,
+      nextServiceKM: "",
+      nextServiceDate: ""
+    });
+    setShowCompleteModal(true);
+  };
+
+  const handleComplete = async () => {
+    const { serviceId, nextServiceKM, nextServiceDate } = completeData;
+    
     if (!nextServiceKM || !nextServiceDate) {
       showToast("Next service details are required", "danger");
       return;
     }
+
     try {
       setWorking(true);
-      await axiosInstance.patch(constant.SERVICE_MANAGER_COMPLETE(svc._id), {
+      await axiosInstance.patch(constant.SERVICE_MANAGER_COMPLETE(serviceId), {
         nextServiceKM,
         nextServiceDate,
       });
       await load();
       setActive(null);
+      setShowCompleteModal(false);
       showToast("Service marked completed", "success");
     } catch (e) {
       showToast(e.response?.data?.error || "Failed to complete service", "danger");
     } finally {
       setWorking(false);
     }
+  };
+
+  const updateCompleteData = (field, value) => {
+    setCompleteData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
@@ -296,7 +331,7 @@ const ServiceHome = () => {
                           {tab === "IN PROGRESS" && (
                             <button
                               className="btn btn-sm btn-success"
-                              onClick={() => complete(svc)}
+                              onClick={() => openCompleteModal(svc)}
                             >
                               Complete
                             </button>
@@ -321,7 +356,7 @@ const ServiceHome = () => {
 
       {/* Expenses Section */}
       {active && (
-        <div >
+        <div>
           <div className="card-body">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <h6 className="m-0">Service Expenses</h6>
@@ -398,6 +433,61 @@ const ServiceHome = () => {
               </button>
               <div className="badge bg-light text-dark p-2">
                 Total Expenses: <b>₹ {Number(total || 0).toFixed(2)}</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Complete Service Modal */}
+      {showCompleteModal && (
+        <div className="modal show fade d-block" tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Complete Service</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowCompleteModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Next Service KM</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={completeData.nextServiceKM}
+                    onChange={(e) => updateCompleteData("nextServiceKM", e.target.value)}
+                    placeholder="Enter next service KM"
+                    min="0"
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Next Service Date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={completeData.nextServiceDate}
+                    onChange={(e) => updateCompleteData("nextServiceDate", e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowCompleteModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-success"
+                  onClick={handleComplete}
+                  disabled={working}
+                >
+                  {working ? "Completing..." : "Complete Service"}
+                </button>
               </div>
             </div>
           </div>

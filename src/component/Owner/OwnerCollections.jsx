@@ -105,7 +105,6 @@ function OwnerCollections() {
 
   return (
     <div className="container py-4">
-      {/* Header with Back Button */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="mb-0">Collections Report</h4>
         <button
@@ -181,7 +180,6 @@ function OwnerCollections() {
         </div>
       </div>
 
-      {/* Totals Section */}
       <div>
         <div className="card-body">
           <div className="d-flex gap-3 flex-wrap">
@@ -198,25 +196,30 @@ function OwnerCollections() {
         </div>
       </div>
 
-      {/* Chart Section */}
+     
       <div>
-        <div className="card-body" style={{ height: "350px" }}>
+        <div className="card-body" style={{ height: "350px", minHeight: "350px" }}>
           <h6>Collection vs Expenses</h6>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="total" fill="#0d6efd" name="Total Collection" />
-              <Bar dataKey="expenses" fill="#dc3545" name="Expenses" />
-              <Bar dataKey="final" fill="#198754" name="Final Collection" />
-            </BarChart>
-          </ResponsiveContainer>
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+              <BarChart data={chartData}>
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="total" fill="#0d6efd" name="Total Collection" />
+                <Bar dataKey="expenses" fill="#dc3545" name="Expenses" />
+                <Bar dataKey="final" fill="#198754" name="Final Collection" />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="d-flex justify-content-center align-items-center h-100">
+              <p className="text-muted">No chart data available</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Table Section */}
       <div>
         <div className="card-body table-responsive">
           <table className="table">
