@@ -1,7 +1,7 @@
 const local = "http://localhost:4500";
 const render = "https://garage-pulse-api.onrender.com";
 
-const base = render;
+const base = local;
 
 const constant = {
   REGISTER_API: `${base}/auth/register`,
@@ -14,8 +14,8 @@ const constant = {
   DELETEVEHICLE: (id) => `${base}/vehicle/${id}`,
 
   ASSIGN: `${base}/assignVehicle/assign`,
-  ASSIGNMENT:(id) => `${base}/assignVehicle/assignment/${id}`,
-  AVAILABLE:`${base}/assignVehicle/available`,
+  ASSIGNMENT: (id) => `${base}/assignVehicle/assignment/${id}`,
+  AVAILABLE: `${base}/assignVehicle/available`,
 
   CREATESERVICE: `${base}/service/createService`,
   GETALLSERVICE: `${base}/service/getAllService`,
@@ -54,24 +54,35 @@ const constant = {
   CREATE_FUEL_TYPE: `${base}/dropFuel/type`,
   GET_ALL_FUEL_TYPES: `${base}/dropFuel/type/all`,
 
-    GET_ASSIGNED_VEHICLE: `${base}/employee/assignedVehicle`,
+  GET_ASSIGNED_VEHICLE: `${base}/employee/assignedVehicle`,
   UPDATE_RUNNING_KM: `${base}/employee/updateRunningKM`,
   CREATE_COLLECTION: `${base}/collection/add`,
   CREATE_SERVICE_REQUEST: `${base}/service/request`,
   GET_SERVICE_REQUESTS_OWNER: `${base}/service/requests/owner`,
- // **** EMPLOYEE (driver/co-driver) ****
+  // **** EMPLOYEE (driver/co-driver) ****
   EMPLOYEE_ASSIGNED_VEHICLE: `${base}/employee/me/assigned-vehicle`,
   EMPLOYEE_UPDATE_RUNNING_KM: (vehicleId) => `${base}/employee/vehicle/${vehicleId}/update-km`,
   EMPLOYEE_CHANGE_PASSWORD: `${base}/employee/change-password`,
 
   // **** COLLECTIONS ****
   COLLECTION_CREATE: `${base}/collection/create`,
-  COLLECTION_LIST: `${base}/collection/list`, 
+  COLLECTION_LIST: `${base}/collection/list`,
 
   // **** SERVICE REQUESTS ****
   SERVICE_REQUEST_CREATE: `${base}/service-request/create`,
   SERVICE_REQUEST_LIST_OWNER: `${base}/service-request/list`,
   SERVICE_REQUEST_UPDATE_STATUS: (id) => `${base}/service-request/${id}/status`,
+
+  // **** SERVICE MANAGER ROUTES ****
+  SERVICE_MANAGER_REQUESTS: `${base}/service-manager/requests`,
+  SERVICE_MANAGER_UPDATE_STATUS: (id) => `${base}/service-manager/status/${id}`,
+  SERVICE_MANAGER_ASSIGN: `${base}/service-manager/assign-mechanic`,
+  SERVICE_MANAGER_EXPENSE: `${base}/service-manager/add-expense`,
+  SERVICE_MANAGER_COMPLETE: (id) => `${base}/service-manager/complete/${id}`,
+  SERVICE_MANAGER_CHANGE_PASSWORD: `${base}/service-manager/change-password`,
+  SERVICE_MANAGER_MECHANICS: `${base}/service-manager/mechanics`,
+
+
 };
 
 export default constant;

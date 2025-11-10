@@ -38,6 +38,7 @@ import OwnerCollections from "./component/Owner/OwnerCollections";
 
 //Admin
 import AdminDashboard from "./component/admin/AdminDashboard";
+import ServiceHome from "./component/Service/serviceManager/ServiceHome";
 
 
 // ROUTES
@@ -101,6 +102,20 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+        {/* service manager dashboard  */}
+      <Route
+        path="/serviceHome"
+        element={
+          <ProtectedRoute>
+            {user?.role?.toLowerCase() === "service manager" ? (
+              <ServiceHome />
+            ) : (
+              <Navigate to="/home" replace />
+            )}
+          </ProtectedRoute>
+        }
+      />
+
 
       {/* Vehicle Management */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -133,9 +148,6 @@ function AppRoutes() {
   );
 }
 
-// =========================================================
-// WRAPPER
-// =========================================================
 
 function App() {
   return (
@@ -148,3 +160,4 @@ function App() {
 }
 
 export default App;
+  

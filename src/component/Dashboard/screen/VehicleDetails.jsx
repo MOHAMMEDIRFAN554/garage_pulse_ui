@@ -39,7 +39,6 @@ const VehicleDetails = () => {
           ← Back
         </button>
 
-        {/* ✅ Replaced old print logic with reusable component */}
         <PrintComponent
           contentSelector=".vehicle-card"
           title="Vehicle Details Report"

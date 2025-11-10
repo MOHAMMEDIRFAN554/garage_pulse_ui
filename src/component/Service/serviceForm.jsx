@@ -14,7 +14,6 @@ const ServiceForm = () => {
     vehicleNumber: "",
     serviceType: "",
     remarks: "",
-    cost: "",
   });
 
   const [vehicleDetails, setVehicleDetails] = useState(null);
@@ -68,10 +67,8 @@ const ServiceForm = () => {
         vehicleNumber: data.vehicleNumber || "",
         serviceType: data.serviceType || "",
         remarks: data.remarks || "",
-        cost: data.cost || "",
       });
 
-      // Set vehicle details for edit mode
       if (data.vehicleNumber) {
         const vehicle = vehicles.find(v => v.registrationNumber === data.vehicleNumber);
         if (vehicle) {
@@ -126,7 +123,7 @@ const ServiceForm = () => {
         showToast("Service updated successfully!", "success");
       } else {
         await axiosInstance.post(constant.CREATESERVICE, formData);
-        showToast("Service added successfully!", "success");
+        showToast("Service request submitted successfully!", "success");
       }
       setTimeout(() => navigate("/ServiceList"), 1200);
     } catch (err) {
@@ -140,7 +137,7 @@ const ServiceForm = () => {
       <div className="service-card mx-auto">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="card-title m-0">
-            {isEdit ? "Edit Service" : "Add Service"}
+            {isEdit ? "Edit Service" : "Request Service"}
           </h2>
           <button
             className="btn btn-secondary-modern"
@@ -208,25 +205,12 @@ const ServiceForm = () => {
               className="form-control"
               placeholder="Enter service details or remarks"
               rows="3"
+              required
             ></textarea>
           </div>
 
-          <div className="mb-3">
-            <label className="form-label fw-semibold">Cost (₹)</label>
-            <input
-              type="number"
-              name="cost"
-              value={formData.cost}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="Enter service cost"
-              step="0.01"
-              required
-            />
-          </div>
-
           <button type="submit" className="btn btn-modern w-100 mt-3">
-            {isEdit ? "Update Service" : "Add Service"}
+            {isEdit ? "Update Service" : "Submit Service Request"}
           </button>
         </form>
       </div>
