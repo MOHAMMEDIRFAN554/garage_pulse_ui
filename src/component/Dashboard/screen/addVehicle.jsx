@@ -85,7 +85,6 @@ const AddVehicle = () => {
     loadManufacturers();
   }, [vehicle.type]);
 
-  // Load models based on manufacturer
   useEffect(() => {
     const loadModels = async () => {
       if (!vehicle.manufacturer) return;
@@ -133,7 +132,6 @@ const AddVehicle = () => {
   const removeImage = (id) => {
     setImageFiles((prev) => {
       const updatedFiles = prev.filter((img) => img.id !== id);
-      // Ensure at least one file input remains
       if (updatedFiles.length === 0) {
         return [{ id: Date.now(), file: null, preview: null }];
       }

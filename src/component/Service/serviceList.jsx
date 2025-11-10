@@ -19,6 +19,9 @@ const ServiceList = () => {
 
   useEffect(() => {
     fetchServices();
+    // Set up polling for live updates every 10 seconds
+    const interval = setInterval(fetchServices, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchServices = async () => {
@@ -87,7 +90,7 @@ const ServiceList = () => {
                     <th>Registration No</th>
                     <th>Service Type</th>
                     <th>Description</th>
-                    <th>Cost (₹)</th>
+                    <th>Status</th>
                     <th style={{ width: "160px" }}>Actions</th>
                   </tr>
                 </thead>
@@ -113,7 +116,15 @@ const ServiceList = () => {
                             : service.remarks
                           : "-"}
                       </td>
-                      <td>{service.cost}</td>
+                      <td>
+                        <span className={`badge ${
+                          service.status === 'Completed' ? 'bg-success' : 
+                          service.status === 'In Progress' ? 'bg-warning' : 
+                          'bg-secondary'
+                        }`}>
+                          {service.status}
+                        </span>
+                      </td>
                       <td>
                         <div className="d-flex gap-2">
                           <button
@@ -171,15 +182,16 @@ const ServiceList = () => {
                   <strong>Service Type:</strong> {selectedService.serviceType}
                 </p>
                 <p>
-                  <strong>Cost:</strong> ₹{selectedService.cost}
-                </p>
-                <p>
                   <strong>Description:</strong>{" "}
                   {selectedService.remarks || "N/A"}
                 </p>
                 <p>
                   <strong>Status:</strong>{" "}
-                  <span className="badge bg-info">
+                  <span className={`badge ${
+                    selectedService.status === 'Completed' ? 'bg-success' : 
+                    selectedService.status === 'In Progress' ? 'bg-warning' : 
+                    'bg-secondary'
+                  }`}>
                     {selectedService.status}
                   </span>
                 </p>
