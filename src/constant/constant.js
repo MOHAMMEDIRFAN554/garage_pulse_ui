@@ -1,7 +1,7 @@
 const local = "http://localhost:4500";
 const render = "https://garage-pulse-api.onrender.com";
 
-const base = local;
+const base = render;
 
 const constant = {
   REGISTER_API: `${base}/auth/register`,

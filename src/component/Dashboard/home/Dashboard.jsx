@@ -91,147 +91,44 @@ const Dashboard = () => {
 
   return (
     <div className="container py-4">
-      {/* Image Modal */}
-      {showModal && selectedVehicle && (
-        <div
-          className="modal fade show"
-          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
-          tabIndex="-1"
-        >
-          <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {selectedVehicle.registrationNumber} - Images
-                  {selectedVehicle.images &&
-                    selectedVehicle.images.length > 1 &&
-                    ` (${currentImageIndex + 1}/${
-                      selectedVehicle.images.length
-                    })`}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={closeModal}
-                ></button>
-              </div>
-              <div className="modal-body text-center">
-                {selectedVehicle.images &&
-                selectedVehicle.images.length > 1 ? (
-                  <div className="carousel-container position-relative">
-                    <img
-                      src={selectedVehicle.images[currentImageIndex]}
-                      className="img-fluid rounded"
-                      alt={`${selectedVehicle.registrationNumber} - ${
-                        currentImageIndex + 1
-                      }`}
-                      style={{
-                        maxHeight: "500px",
-                        width: "auto",
-                        objectFit: "contain",
-                      }}
-                    />
-
-                    <button
-                      className="carousel-control-prev position-absolute top-50 start-0 translate-middle-y btn btn-dark rounded-circle p-2"
-                      onClick={prevImage}
-                      style={{ left: "10px" }}
-                    >
-                      <span className="carousel-control-prev-icon"></span>
-                      <span className="visually-hidden">Previous</span>
-                    </button>
-
-                    <button
-                      className="carousel-control-next position-absolute top-50 end-0 translate-middle-y btn btn-dark rounded-circle p-2"
-                      onClick={nextImage}
-                      style={{ right: "10px" }}
-                    >
-                      <span className="carousel-control-next-icon"></span>
-                      <span className="visually-hidden">Next</span>
-                    </button>
-                  </div>
-                ) : (
-                  <img
-                    src={getFirstImage(selectedVehicle)}
-                    className="img-fluid rounded"
-                    alt={selectedVehicle.registrationNumber}
-                    style={{
-                      maxHeight: "500px",
-                      width: "auto",
-                      objectFit: "contain",
-                    }}
-                  />
-                )}
-
-                <div className="vehicle-info mt-4 p-3 bg-light rounded">
-                  <h6>Vehicle Information</h6>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <p className="mb-1">
-                        <strong>Manufacturer:</strong>{" "}
-                        {selectedVehicle.manufacturer}
-                      </p>
-                      <p className="mb-1">
-                        <strong>Model:</strong> {selectedVehicle.model}
-                      </p>
-                      <p className="mb-1">
-                        <strong>Type:</strong> {selectedVehicle.type}
-                      </p>
-                    </div>
-                    <div className="col-md-6">
-                      <p className="mb-1">
-                        <strong>Fuel Type:</strong> {selectedVehicle.fuelType}
-                      </p>
-                      <p className="mb-1">
-                        <strong>Running KM:</strong>{" "}
-                        {selectedVehicle.runningKM?.toLocaleString()}
-                      </p>
-                      <p className="mb-1">
-                        <strong>Year:</strong> {selectedVehicle.makeYear}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => navigate(`/vehicle/${selectedVehicle._id}`)}
-                >
-                  View Full Details
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={closeModal}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* ==================== VEHICLE MANAGEMENT BUTTONS ==================== */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="m-0">Dashboard - Vehicles</h2>
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => navigate("/home")}
-          >
-            Back to Home
-          </button>
+        <div className="btn-group" role="group">
           <button
             className="btn btn-primary"
             onClick={() => navigate("/addVehicle")}
           >
-            Add Vehicle
+            <i className="bi bi-plus-circle me-1"></i> Add Vehicle
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => navigate("/deleteVehicle")}
+          >
+            <i className="bi bi-trash3 me-1"></i> Delete Vehicle
+          </button>
+          <button
+            className="btn btn-warning"
+            onClick={() => navigate("/assignVehicle")}
+          >
+            <i className="bi bi-people-fill me-1"></i> Assign Vehicle
+          </button>
+          <button
+            className="btn btn-info text-white"
+            onClick={() => navigate("/insurance")}
+          >
+            <i className="bi bi-shield-lock me-1"></i> Insurance
+          </button>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/home")}
+          >
+            <i className="bi bi-house-door me-1"></i> Back to Home
           </button>
         </div>
       </div>
 
+      {/* ==================== FILTER ==================== */}
       <div className="d-flex align-items-center mb-4 gap-2">
         <label className="me-2 mb-0 fw-semibold">Filter:</label>
         <select
@@ -247,6 +144,7 @@ const Dashboard = () => {
         </select>
       </div>
 
+      {/* ==================== VEHICLE CARDS ==================== */}
       <div className="row g-3">
         {paginatedVehicles.map((v) => (
           <div key={v._id} className="col-sm-6 col-md-4 col-lg-3">
@@ -305,6 +203,7 @@ const Dashboard = () => {
         )}
       </div>
 
+      {/* ==================== PAGINATION ==================== */}
       {filteredVehicles.length > itemsPerPage && (
         <nav className="mt-4">
           <ul className="pagination justify-content-center">
@@ -320,9 +219,7 @@ const Dashboard = () => {
             {Array.from({ length: totalPages }, (_, i) => (
               <li
                 key={i}
-                className={`page-item ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
+                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
               >
                 <button
                   className="page-link"
@@ -334,9 +231,8 @@ const Dashboard = () => {
             ))}
 
             <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""
+                }`}
             >
               <button
                 className="page-link"
@@ -347,6 +243,122 @@ const Dashboard = () => {
             </li>
           </ul>
         </nav>
+      )}
+
+      {/* ==================== IMAGE MODAL ==================== */}
+      {showModal && selectedVehicle && (
+        <div
+          className="modal fade show"
+          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+          tabIndex="-1"
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {selectedVehicle.registrationNumber} - Images
+                  {selectedVehicle.images &&
+                    selectedVehicle.images.length > 1 &&
+                    ` (${currentImageIndex + 1}/${selectedVehicle.images.length})`}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                ></button>
+              </div>
+              <div className="modal-body text-center">
+                {selectedVehicle.images &&
+                selectedVehicle.images.length > 1 ? (
+                  <div className="carousel-container position-relative">
+                    <img
+                      src={selectedVehicle.images[currentImageIndex]}
+                      className="img-fluid rounded"
+                      alt={`${selectedVehicle.registrationNumber} - ${currentImageIndex + 1}`}
+                      style={{
+                        maxHeight: "500px",
+                        width: "auto",
+                        objectFit: "contain",
+                      }}
+                    />
+                    <button
+                      className="carousel-control-prev position-absolute top-50 start-0 translate-middle-y btn btn-dark rounded-circle p-2"
+                      onClick={prevImage}
+                      style={{ left: "10px" }}
+                    >
+                      <span className="carousel-control-prev-icon"></span>
+                      <span className="visually-hidden">Previous</span>
+                    </button>
+
+                    <button
+                      className="carousel-control-next position-absolute top-50 end-0 translate-middle-y btn btn-dark rounded-circle p-2"
+                      onClick={nextImage}
+                      style={{ right: "10px" }}
+                    >
+                      <span className="carousel-control-next-icon"></span>
+                      <span className="visually-hidden">Next</span>
+                    </button>
+                  </div>
+                ) : (
+                  <img
+                    src={getFirstImage(selectedVehicle)}
+                    className="img-fluid rounded"
+                    alt={selectedVehicle.registrationNumber}
+                    style={{
+                      maxHeight: "500px",
+                      width: "auto",
+                      objectFit: "contain",
+                    }}
+                  />
+                )}
+
+                <div className="vehicle-info mt-4 p-3 bg-light rounded">
+                  <h6>Vehicle Information</h6>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <p className="mb-1">
+                        <strong>Manufacturer:</strong> {selectedVehicle.manufacturer}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Model:</strong> {selectedVehicle.model}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Type:</strong> {selectedVehicle.type}
+                      </p>
+                    </div>
+                    <div className="col-md-6">
+                      <p className="mb-1">
+                        <strong>Fuel Type:</strong> {selectedVehicle.fuelType}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Running KM:</strong> {selectedVehicle.runningKM?.toLocaleString()}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Year:</strong> {selectedVehicle.makeYear}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => navigate(`/vehicle/${selectedVehicle._id}`)}
+                >
+                  View Full Details
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -67,7 +67,7 @@ const DeleteVehicle = () => {
           <h2 className="card-title m-0">Delete Vehicle</h2>
           <button
             className="btn btn-secondary-modern"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/dashboard")}
           >
             Back
           </button>

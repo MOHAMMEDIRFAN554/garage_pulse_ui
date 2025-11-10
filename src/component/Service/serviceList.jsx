@@ -149,9 +149,9 @@ const ServiceList = () => {
           <div className="d-flex gap-2">
             <button
               className="btn btn-secondary-modern"
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/owner/service-requests")}
             >
-              Back to Home
+              Back to Service Dashboard
             </button>
             <button
               className="btn btn-modern"

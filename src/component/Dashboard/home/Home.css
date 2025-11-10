@@ -1,167 +1,158 @@
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
+/* ===========================
+   General Layout & Typography
+   =========================== */
+body {
+  background: #f8fafc;
+  font-family: "Poppins", sans-serif;
 }
 
-.home-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.container {
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.home-header {
+h3.fw-bold {
+  color: #1a1a1a;
+}
+
+.text-muted strong {
+  color: #333;
+}
+
+/* ===========================
+   Toast Styling
+   =========================== */
+.toast {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ===========================
+   Cards - Stats Section
+   =========================== */
+.card {
+  transition: all 0.3s ease;
+  border-radius: 15px !important;
+}
+
+.card.bg-light {
+  background: linear-gradient(145deg, #f8f9fa, #ffffff);
+}
+
+.card.bg-light:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card.bg-light i {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.card.bg-light:hover i {
+  transform: scale(1.2);
+}
+
+/* ===========================
+   Home Tiles (Main Management)
+   =========================== */
+.home-tile {
+  border-radius: 18px !important;
+  transition: all 0.35s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-tile::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
   width: 100%;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0,0,0,0.3);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: top 0.4s ease-in-out;
 }
 
-.user-name {
-  font-size: 1.2rem;
+.home-tile:hover::before {
+  top: 0;
+}
+
+.home-tile:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.home-tile i {
+  transition: all 0.3s ease;
+}
+
+.home-tile:hover i {
+  transform: rotate(8deg) scale(1.2);
+}
+
+/* Color Adjustments for Readability */
+.bg-primary.home-tile:hover {
+  background: linear-gradient(135deg, #0d6efd, #2563eb);
+}
+
+.bg-success.home-tile:hover {
+  background: linear-gradient(135deg, #198754, #16a34a);
+}
+
+.bg-warning.home-tile:hover {
+  background: linear-gradient(135deg, #ffc107, #facc15);
+}
+
+.bg-info.home-tile:hover {
+  background: linear-gradient(135deg, #0dcaf0, #06b6d4);
+}
+
+/* ===========================
+   Buttons
+   =========================== */
+.btn-outline-danger {
+  border-width: 2px;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.logout-btn {
-  padding: 0.5rem 1rem;
-  background-color: #ff4d4f;
-  border: none;
-  border-radius: 5px;
+.btn-outline-danger:hover {
+  background: #dc3545;
   color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
 }
 
-.logout-btn:hover {
-  background-color: #d9363e;
-}
-
-.home-main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 2rem;
-}
-
-.home-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 2rem 3rem;
-  border-radius: 15px;
-  text-align: center;
-  max-width: 500px;
-  width: 100%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.home-card h1 {
-  margin-bottom: 1rem;
-  font-size: 2rem;
-}
-
-.home-card p {
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  color: #f0f0f0;
-}
-
-.home-btn {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #00bfff;
-  color: #fff;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-.home-btn:hover {
-  background-color: #009acd;
-}
-
-@media (max-width: 768px) {
-  .home-card {
-    padding: 1.5rem 2rem;
+/* ===========================
+   Animations
+   =========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  .home-card h1 {
-    font-size: 1.7rem;
-  }
-
-  .home-card p {
-    font-size: 0.95rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 480px) {
-  .home-card {
-    padding: 1rem 1.5rem;
+/* ===========================
+   Responsive Design
+   =========================== */
+@media (max-width: 767px) {
+  .home-tile {
+    padding: 1.5rem !important;
   }
 
-  .home-card h1 {
-    font-size: 1.5rem;
+  .home-tile h4 {
+    font-size: 1.1rem;
   }
 
-  .home-card p {
-    font-size: 0.9rem;
+  .home-tile i {
+    font-size: 1.8rem !important;
   }
 
-  .home-btn {
-    width: 100%;
-  }
-}
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}
-
-.home-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #00bfff;
-  color: #fff;
-  font-weight: 600;
-  transition: 0.3s;
-  min-width: 200px;
-}
-
-.home-btn:hover {
-  background-color: #009acd;
-}
-
-@media (min-width: 1024px) {
-  .home-card {
-    max-width: 700px;
+  h3.fw-bold {
+    font-size: 1.4rem;
   }
 }

@@ -72,8 +72,33 @@ function OwnerServiceRequests() {
   };
 
   return (
+    
     <div className="container py-4">
-      <h4 className="mb-3">Service Requests</h4>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="m-0">Service Requests</h2>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/serviceForm")}
+          >
+            <i className="bi bi-plus-circle me-1"></i> Add Service
+          </button>
+          <button
+            className="btn btn-info text-white"
+            onClick={() => navigate("/serviceList")}
+          >
+            <i className="bi bi-form me-1"></i> Service Management
+          </button>
+          
+          
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/home")}
+          >
+            <i className="bi bi-house-door me-1"></i> Back to Home
+          </button>
+        </div>
+      </div>
       <div className="card-body">
         <div className="table-responsive">
           <table className="table">
