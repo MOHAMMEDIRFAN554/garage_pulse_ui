@@ -15,6 +15,9 @@ function EmployeeHome() {
   const [todayCollectionId, setTodayCollectionId] = useState(null);
   const [pwd, setPwd] = useState({ oldPassword: "", newPassword: "" });
   const [dailyTotal, setDailyTotal] = useState(0);
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -37,18 +40,31 @@ function EmployeeHome() {
     init();
   }, []);
 
+  // ✅ Filter strictly to logged-in employee’s collections only
   const loadTodayCollections = async () => {
     try {
       const r = await axiosInstance.get(constant.COLLECTION_LIST, {
         params: { range: "daily" },
       });
       const user = JSON.parse(localStorage.getItem("user"));
+      const myEmail = user?.email?.toLowerCase();
+      if (!myEmail) return;
+
+      // only my collections, strictly filtered by backend and double-checked here
       const mine = (r.data.rows || []).filter(
-        (x) => x.employeeId?.email === user?.email
+        (x) => x.employeeId?.email?.toLowerCase() === myEmail
       );
 
       if (mine.length > 0) {
         const today = mine[0];
+        const todayDate = new Date().toISOString().split("T")[0];
+        const recordDate = new Date(today.date).toISOString().split("T")[0];
+
+        if (recordDate !== todayDate) {
+          clearTodayData();
+          return;
+        }
+
         setCol({
           totalCollection: today.totalCollection || "",
           note: today.note || "",
@@ -68,12 +84,22 @@ function EmployeeHome() {
             },
             expenses: today.expenses,
             total: today.finalCollection || 0,
+            date: todayDate,
+            email: myEmail,
           })
         );
       } else {
         const saved = localStorage.getItem("todayCollection");
         if (saved) {
           const data = JSON.parse(saved);
+          const todayDate = new Date().toISOString().split("T")[0];
+
+          // Clear if mismatch by email or date
+          if (data.date !== todayDate || data.email !== myEmail) {
+            clearTodayData();
+            return;
+          }
+
           setTodayCollectionId(data.id || null);
           setCol(data.col || { totalCollection: "", note: "" });
           setExpenses(data.expenses || [{ name: "", amount: "" }]);
@@ -85,17 +111,35 @@ function EmployeeHome() {
     }
   };
 
+  const clearTodayData = () => {
+    setTodayCollectionId(null);
+    setCol({ totalCollection: "", note: "" });
+    setExpenses([{ name: "", amount: "" }]);
+    setDailyTotal(0);
+    localStorage.removeItem("todayCollection");
+  };
+
   useEffect(() => {
     loadTodayCollections();
   }, []);
+
+  const refreshToday = () => {
+    const newDate = new Date().toISOString().split("T")[0];
+    setCurrentDate(newDate);
+    clearTodayData();
+    loadTodayCollections();
+  };
 
   const saveKM = async () => {
     if (!vehicle?._id) return alert("No vehicle assigned");
     setLoading(true);
     try {
-      await axiosInstance.patch(constant.EMPLOYEE_UPDATE_RUNNING_KM(vehicle._id), {
-        runningKM: Number(km),
-      });
+      await axiosInstance.patch(
+        constant.EMPLOYEE_UPDATE_RUNNING_KM(vehicle._id),
+        {
+          runningKM: Number(km),
+        }
+      );
       alert("Updated running KM");
     } catch (e) {
       alert(e.response?.data?.error || "Failed to update KM");
@@ -116,14 +160,17 @@ function EmployeeHome() {
     setExpenses(cp.length ? cp : [{ name: "", amount: "" }]);
   };
 
+  // ✅ Save collection only for current employee
   const saveCollection = async () => {
     if (!vehicle?._id) return alert("No vehicle assigned");
+    const user = JSON.parse(localStorage.getItem("user"));
     const payload = {
       vehicleId: vehicle._id,
       date: new Date(),
       totalCollection: Number(col.totalCollection || 0),
       expenses: expenses.filter((e) => e.name && e.amount !== ""),
       note: col.note || "",
+      employeeEmail: user?.email, // ✅ unique identifier
     };
 
     try {
@@ -140,6 +187,8 @@ function EmployeeHome() {
       }
 
       const updated = response.data.collection || payload;
+      const todayDate = new Date().toISOString().split("T")[0];
+      const myEmail = user?.email?.toLowerCase();
       setTodayCollectionId(updated._id);
       setDailyTotal(
         Number(updated.totalCollection || 0) -
@@ -157,6 +206,8 @@ function EmployeeHome() {
           total:
             Number(updated.totalCollection || 0) -
             (updated.expenses || []).reduce((s, e) => s + Number(e.amount || 0), 0),
+          date: todayDate,
+          email: myEmail,
         })
       );
     } catch (e) {
@@ -266,28 +317,21 @@ function EmployeeHome() {
         </li>
       </ul>
 
-      {tab === "vehicle" && (
-        <div>
-          <div className="card-body">
-            <div className="mb-3">
-              <label className="form-label">Final Running KM</label>
-              <input
-                type="number"
-                className="form-control"
-                value={km}
-                onChange={(e) => setKm(e.target.value)}
-              />
-            </div>
-            <button className="btn btn-primary" disabled={loading} onClick={saveKM}>
-              {loading ? "Saving..." : "Save"}
-            </button>
-          </div>
-        </div>
-      )}
-
       {tab === "collection" && (
         <div>
           <div className="card-body">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h6 className="mb-0">
+                Current Date: <b>{currentDate}</b>
+              </h6>
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                onClick={refreshToday}
+              >
+                🔄 Refresh
+              </button>
+            </div>
+
             <h6 className="text-center mb-3">Today's Collection Entry</h6>
             <div className="row g-3 mb-3">
               <div className="col-md-6">
@@ -296,7 +340,9 @@ function EmployeeHome() {
                   type="number"
                   className="form-control"
                   value={col.totalCollection}
-                  onChange={(e) => setCol({ ...col, totalCollection: e.target.value })}
+                  onChange={(e) =>
+                    setCol({ ...col, totalCollection: e.target.value })
+                  }
                 />
               </div>
               <div className="col-md-6">
@@ -312,7 +358,10 @@ function EmployeeHome() {
             <hr />
             <div className="d-flex align-items-center mb-2">
               <h6 className="mb-0 me-2">Expenses</h6>
-              <button className="btn btn-sm btn-outline-primary" onClick={addExpense}>
+              <button
+                className="btn btn-sm btn-outline-primary"
+                onClick={addExpense}
+              >
                 + Add
               </button>
             </div>
@@ -348,12 +397,39 @@ function EmployeeHome() {
             ))}
 
             <div className="mt-3">
-              <div className="mb-1">Expenses Total: <b>{expensesTotal}</b></div>
-              <div className="mb-3">Final Collection: <b>{finalCollection}</b></div>
+              <div className="mb-1">
+                Expenses Total: <b>{expensesTotal}</b>
+              </div>
+              <div className="mb-3">
+                Final Collection: <b>{finalCollection}</b>
+              </div>
               <button className="btn btn-success" onClick={saveCollection}>
                 {todayCollectionId ? "Update Collection" : "Save Collection"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "vehicle" && (
+        <div>
+          <div className="card-body">
+            <div className="mb-3">
+              <label className="form-label">Final Running KM</label>
+              <input
+                type="number"
+                className="form-control"
+                value={km}
+                onChange={(e) => setKm(e.target.value)}
+              />
+            </div>
+            <button
+              className="btn btn-primary"
+              disabled={loading}
+              onClick={saveKM}
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
           </div>
         </div>
       )}
@@ -367,7 +443,9 @@ function EmployeeHome() {
                 <select
                   className="form-select"
                   value={svcForm.serviceType}
-                  onChange={(e) => setSvcForm({ ...svcForm, serviceType: e.target.value })}
+                  onChange={(e) =>
+                    setSvcForm({ ...svcForm, serviceType: e.target.value })
+                  }
                 >
                   <option value="">Select</option>
                   {Array.isArray(svcTypes) &&
