@@ -183,7 +183,7 @@ const AddInsurance = () => {
             <button
               type="button"
               className="btn-secondary-modern"
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/dashboard")}
             >
               Back
             </button>

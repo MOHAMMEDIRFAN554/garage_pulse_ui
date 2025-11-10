@@ -36,13 +36,13 @@ const AddVehicle = () => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", msg: "" });
+  const [isOwner, setIsOwner] = useState(false);
 
   const showToast = (msg, type = "success") => {
     setToast({ show: true, msg, type });
     setTimeout(() => setToast({ show: false, msg: "", type: "success" }), 3000);
   };
 
-  // Fetch vehicle types and fuel types
   useEffect(() => {
     const loadDropdowns = async () => {
       try {
@@ -63,7 +63,6 @@ const AddVehicle = () => {
     loadDropdowns();
   }, []);
 
-  // Load manufacturers based on type
   useEffect(() => {
     const loadManufacturers = async () => {
       if (!vehicle.type) return;
@@ -114,6 +113,24 @@ const AddVehicle = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  // ✅ Auto-fill owner name when ticked
+  const handleOwnerCheck = (e) => {
+    const checked = e.target.checked;
+    setIsOwner(checked);
+    if (checked) {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user?.name) {
+          setVehicle((prev) => ({ ...prev, ownerName: user.name }));
+        }
+      } catch {
+        console.warn("User info not found in localStorage");
+      }
+    } else {
+      setVehicle((prev) => ({ ...prev, ownerName: "" }));
+    }
   };
 
   const handleFileChange = (id, file) => {
@@ -258,16 +275,29 @@ const AddVehicle = () => {
                 </div>
               </div>
 
+              {/* ✅ Owner Checkbox and Field */}
               <div className="col-md-6">
                 <label className="form-label">Owner Name</label>
-                <div className="input-group">
-                  <span className="input-group-text"><i className="bi bi-person-circle"></i></span>
+                <div className="input-group align-items-center">
+                  <div className="input-group-text bg-light">
+                    <input
+                      type="checkbox"
+                      className="form-check-input me-2"
+                      checked={isOwner}
+                      onChange={handleOwnerCheck}
+                      id="ownerCheck"
+                    />
+                    <label htmlFor="ownerCheck" className="mb-0">
+                      Belongs to me
+                    </label>
+                  </div>
                   <input
                     name="ownerName"
                     className={`form-control ${getValidationClass(vehicle.ownerName)}`}
                     value={vehicle.ownerName}
                     onChange={handleChange}
                     placeholder="Enter owner name"
+                    disabled={isOwner}
                   />
                 </div>
               </div>

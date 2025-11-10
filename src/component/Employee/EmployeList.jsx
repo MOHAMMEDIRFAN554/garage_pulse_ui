@@ -78,26 +78,37 @@ const EmployeeList = () => {
 
   return (
     <div className="container py-4">
-      {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="m-0">Dashboard - Employees</h2>
-        <div className="d-flex gap-2">
+        <h2 className="m-0">Employee Dasboard</h2>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/addEmployee")}
+          >
+            <i className="bi bi-plus-circle me-1"></i> Add Employee
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => navigate("/DeleteEmployee")}
+          >
+            <i className="bi bi-trash3 me-1"></i> Delete Employee
+          </button>
+          <button
+            className="btn btn-warning"
+            onClick={() => navigate("/assignVehicle")}
+          >
+            <i className="bi bi-people-fill me-1"></i> Assign Vehicle
+          </button>
+          
           <button
             className="btn btn-outline-secondary"
             onClick={() => navigate("/home")}
           >
-            Back to Home
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/Addemployee")}
-          >
-            Add Employee
+            <i className="bi bi-house-door me-1"></i> Back to Home
           </button>
         </div>
       </div>
 
-      {/* Filter Section */}
       <div className="d-flex align-items-center mb-4 gap-2">
         <label className="me-2 mb-0 fw-semibold">Filter:</label>
         <select
@@ -112,7 +123,6 @@ const EmployeeList = () => {
         </select>
       </div>
 
-      {/* Employee Cards */}
       <div className="row g-3">
         {paginatedEmployees.map((emp) => (
           <div key={emp._id} className="col-sm-6 col-md-4 col-lg-3">
@@ -139,7 +149,6 @@ const EmployeeList = () => {
                   Role: {formatRoleForDisplay(emp.role)}
                 </p>
 
-                {/* ✅ Assigned Vehicle Display */}
                 {emp.assignedVehicle ? (
                   <p className="card-text text-success small mb-0">
                     <strong>Vehicle:</strong> {emp.assignedVehicle}
@@ -161,7 +170,6 @@ const EmployeeList = () => {
         )}
       </div>
 
-      {/* Pagination */}
       {filteredEmployees.length > itemsPerPage && (
         <nav className="mt-4">
           <ul className="pagination justify-content-center">
@@ -206,8 +214,7 @@ const EmployeeList = () => {
         </nav>
       )}
 
-      {/* Employee Details Modal */}
-      {selectedEmployee && (
+        {selectedEmployee && (
         <div
           className="employee-modal-overlay"
           onClick={() => setSelectedEmployee(null)}

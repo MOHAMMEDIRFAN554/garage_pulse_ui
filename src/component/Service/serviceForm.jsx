@@ -161,7 +161,7 @@ const ServiceForm = () => {
           </h2>
           <button
             className="btn btn-secondary-modern"
-            onClick={() => navigate("/ServiceList")}
+            onClick={() => navigate("/owner/service-requests")}
           >
             Back
           </button>
