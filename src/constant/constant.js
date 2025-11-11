@@ -1,7 +1,7 @@
-const local = "http://localhost:4500";
+const local = "http://localhost:5000";
 const render = "https://garage-pulse-api.onrender.com";
 
-const base = render;
+const base = local;
 
 const constant = {
   REGISTER_API: `${base}/auth/register`,
@@ -67,6 +67,7 @@ const constant = {
   // **** COLLECTIONS ****
   COLLECTION_CREATE: `${base}/collection/create`,
   COLLECTION_LIST: `${base}/collection/list`,
+  // LIST_COLLECTION: `${base}/collection/list`,
 
   // **** SERVICE REQUESTS ****
   SERVICE_REQUEST_CREATE: `${base}/service-request/create`,
