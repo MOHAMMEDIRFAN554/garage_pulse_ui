@@ -61,9 +61,9 @@ const DeleteVehicle = () => {
     if (!confirmDelete) return;
 
     try {
-      const deleteURL = vehicleData._id
-        ? constant.DELETEVEHICLE(vehicleData._id)
-        : `${constant.DELETEVEHICLEBYNUMBER}/${vehicleData.registrationNumber}`;
+      const deleteURL = `${constant.GETVEHICLENUMBER}/${vehicleData.registrationNumber}`;
+
+
 
       await axiosInstance.delete(deleteURL);
       showToast("Vehicle deleted successfully!", "success");
