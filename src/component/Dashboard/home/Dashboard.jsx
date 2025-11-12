@@ -101,12 +101,12 @@ const Dashboard = () => {
           >
             <i className="bi bi-plus-circle me-1"></i> Add Vehicle
           </button>
-          <button
+          {/* <button
             className="btn btn-danger"
             onClick={() => navigate("/deleteVehicle")}
           >
             <i className="bi bi-trash3 me-1"></i> Delete Vehicle
-          </button>
+          </button> */}
           <button
             className="btn btn-warning"
             onClick={() => navigate("/assignVehicle")}
