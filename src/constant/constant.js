@@ -5,7 +5,7 @@ const base = render;
 
 const constant = {
   REGISTER_API: `${base}/auth/register`,
-  FORGOT_API: `${base}/auth/resetpassword`,
+  FORGOT_API: `${base}/auth/forgotpassword`,
   LOGIN_API: `${base}/auth/login`,
   ADDVEHICLE: `${base}/vehicle/add`,
   GETALLVEHICLE: `${base}/vehicle/all`,
