@@ -17,50 +17,55 @@ const DeleteVehicle = () => {
     setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
   };
 
-  const handleSearch = async () => {
-  if (!registrationNumber.trim()) {
-    showToast("Please enter a registration number.", "warning");
-    return;
-  }
-  setLoading(true);
-  try {
-    const res = await axiosInstance.get(
-      `${constant.GETVEHICLEBYNUMBER}/${registrationNumber}`
-    );
-
-    const vehicle =
-      res?.data?.vehicle ||
-      res?.data?.data ||
-      (res?.data?.registrationNumber ? res.data : null);
-
-    if (!vehicle) {
-      showToast("No vehicle found for this registration number.", "danger");
-      setVehicleData(null);
+  const handleFetch = async () => {
+    if (!registrationNumber.trim()) {
+      showToast("Please enter a registration number.", "warning");
       return;
     }
+    setLoading(true);
+    try {
+      const res = await axiosInstance.get(
+        `${constant.GETVEHICLEBYNUMBER}/${registrationNumber}`
+      );
 
-    setVehicleData(vehicle);
-    showToast("Vehicle fetched successfully!", "success");
-  } catch (err) {
-    console.error("Error fetching vehicle:", err);
-    showToast("Failed to fetch vehicle details.", "danger");
-  } finally {
-    setLoading(false);
-  }
-};
+      const vehicle =
+        res?.data?.vehicle ||
+        res?.data?.data ||
+        (res?.data?.registrationNumber ? res.data : null);
 
+      if (!vehicle) {
+        showToast("No vehicle found for this registration number.", "danger");
+        setVehicleData(null);
+        return;
+      }
+
+      setVehicleData(vehicle);
+      showToast("Vehicle fetched successfully!", "success");
+    } catch (err) {
+      console.error("Error fetching vehicle:", err);
+      showToast("Failed to fetch vehicle details.", "danger");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async () => {
-    if (!vehicleData || !vehicleData._id) {
+    if (!vehicleData) {
       showToast("Please fetch a vehicle first.", "warning");
       return;
     }
 
-    if (!window.confirm(`Delete vehicle ${vehicleData.registrationNumber}?`))
-      return;
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete vehicle ${vehicleData.registrationNumber}?`
+    );
+    if (!confirmDelete) return;
 
     try {
-      await axiosInstance.delete(constant.DELETEVEHICLE(vehicleData._id));
+      const deleteURL = vehicleData._id
+        ? constant.DELETEVEHICLE(vehicleData._id)
+        : `${constant.DELETEVEHICLEBYNUMBER}/${vehicleData.registrationNumber}`;
+
+      await axiosInstance.delete(deleteURL);
       showToast("Vehicle deleted successfully!", "success");
       setVehicleData(null);
       setRegistrationNumber("");
@@ -97,10 +102,10 @@ const DeleteVehicle = () => {
             />
             <button
               className="btn btn-outline-primary"
-              onClick={handleSearch}
+              onClick={handleFetch}
               disabled={loading}
             >
-              {loading ? "Searching..." : "Search"}
+              {loading ? "Fetching..." : "Fetch Vehicle"}
             </button>
           </div>
         </div>
