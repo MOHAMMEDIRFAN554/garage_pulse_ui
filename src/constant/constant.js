@@ -12,6 +12,8 @@ const constant = {
   GETVEHICLEBYID: (id) => `${base}/vehicle/${id}`,
   UPDATEVEHICLE: (id) => `${base}/vehicle/${id}`,
   DELETEVEHICLE: (id) => `${base}/vehicle/${id}`,
+  GETVEHICLENUMBER: `${base}/vehicle/number`,
+
 
   ASSIGN: `${base}/assignVehicle/assign`,
   ASSIGNMENT: (id) => `${base}/assignVehicle/assignment/${id}`,

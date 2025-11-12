@@ -25,7 +25,7 @@ const DeleteVehicle = () => {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `${constant.GETVEHICLEBYNUMBER}/${registrationNumber}`
+        `${constant.GETVEHICLENUMBER}/${registrationNumber}`
       );
 
       const vehicle =
