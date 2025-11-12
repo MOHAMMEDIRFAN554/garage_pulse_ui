@@ -113,12 +113,12 @@ const Dashboard = () => {
           >
             <i className="bi bi-people-fill me-1"></i> Assign Vehicle
           </button>
-          <button
+          {/* <button
             className="btn btn-info text-white"
             onClick={() => navigate("/insurance")}
           >
             <i className="bi bi-shield-lock me-1"></i> Insurance
-          </button>
+          </button> */}
           <button
             className="btn btn-outline-secondary"
             onClick={() => navigate("/home")}
