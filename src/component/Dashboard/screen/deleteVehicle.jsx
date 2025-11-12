@@ -9,11 +9,17 @@ const DeleteVehicle = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [vehicleData, setVehicleData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
+
+  const showToast = (message, type = "info") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
+  };
 
   const handleSearch = async () => {
     if (!registrationNumber.trim()) {
-      alert("Please enter a registration number.");
+      showToast("Please enter a registration number.", "warning");
       return;
     }
     setLoading(true);
@@ -23,45 +29,43 @@ const DeleteVehicle = () => {
       );
 
       const vehicle = res?.data?.vehicle || res?.data?.data || res?.data || null;
-      if (!vehicle) {
-        alert("No vehicle found for this registration number.");
+      if (!vehicle?._id) {
+        showToast("No vehicle found for this registration number.", "danger");
         setVehicleData(null);
         return;
       }
       setVehicleData(vehicle);
+      showToast("Vehicle fetched successfully!", "success");
     } catch (err) {
       console.error("Error fetching vehicle:", err);
-      alert("Failed to fetch vehicle details.");
+      showToast("Failed to fetch vehicle details.", "danger");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!vehicleData?._id) {
-      alert("Please fetch a vehicle first.");
+    if (!vehicleData || !vehicleData._id) {
+      showToast("Please fetch a vehicle first.", "warning");
       return;
     }
 
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete vehicle ${vehicleData.registrationNumber}?`
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm(`Delete vehicle ${vehicleData.registrationNumber}?`))
+      return;
 
     try {
       await axiosInstance.delete(constant.DELETEVEHICLE(vehicleData._id));
-      alert("Vehicle deleted successfully!");
+      showToast("Vehicle deleted successfully!", "success");
       setVehicleData(null);
       setRegistrationNumber("");
     } catch (err) {
       console.error("Error deleting vehicle:", err);
-      alert("Failed to delete vehicle. You might not have permission.");
+      showToast("Failed to delete vehicle. You might not have permission.", "danger");
     }
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 position-relative">
       <div className="service-card mx-auto">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="card-title m-0">Delete Vehicle</h2>
@@ -98,8 +102,7 @@ const DeleteVehicle = () => {
         {vehicleData && (
           <div className="alert alert-info mt-3">
             <p>
-              <strong>Owner Name:</strong>{" "}
-              {vehicleData?.ownerName || "Unknown"}
+              <strong>Owner Name:</strong> {vehicleData?.ownerName || "Unknown"}
             </p>
             <p>
               <strong>Registration Number:</strong>{" "}
@@ -124,6 +127,22 @@ const DeleteVehicle = () => {
           </div>
         )}
       </div>
+
+      {toast.show && (
+        <div
+          className={`toast align-items-center text-white bg-${toast.type} border-0 position-fixed bottom-0 end-0 m-3 show`}
+          role="alert"
+        >
+          <div className="d-flex">
+            <div className="toast-body">{toast.message}</div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              onClick={() => setToast({ show: false, message: "", type: "" })}
+            ></button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
